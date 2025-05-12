@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -204,6 +203,7 @@ class _ReportScreenState extends State<ReportScreen> {
                       _buildCell("الكمية", font, 2),
                       _buildCell("سعر البيع", font, 3),
                       _buildCell("سعر الشراء", font, 2),
+                      _buildCell("الحجم", font, 2),
                       _buildCell("الاسم", font, 2),
                       _buildCell("#", font, 1),
                     ],
@@ -219,6 +219,7 @@ class _ReportScreenState extends State<ReportScreen> {
                           _buildCell(salesList[i].quantity.toString(), font, 2),
                           _buildCell(salesList[i].sellingPrice.toStringAsFixed(2), font, 3),
                           _buildCell(salesList[i].purchasePrice.toStringAsFixed(2), font, 2),
+                          _buildCell(salesList[i].itemSizeName.toString(), font, 2),
                           _buildCell(salesList[i].itemName.toString(), font, 2),
                           _buildCell((i + 1).toString(), font, 1),
                         ],
@@ -228,7 +229,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   pw.Row(
                     children: [
                       _buildCell(totalSum.toStringAsFixed(2), font, 2),
-                      _buildCell('السعر الكلي: ', font, 10), // Merged big cell
+                      _buildCell('السعر الكلي: ', font, 12), // Merged big cell
                     ],
                   ),
                 ],

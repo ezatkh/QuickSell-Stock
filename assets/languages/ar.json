@@ -91,6 +91,6 @@
   "cash": "كاش",
   "visaAndCash": "كاش + فيزا",
   "choosePaymentMethod": "اختر طريقة الدفع",
-  "cashAmount": "مبلغ الكاش"
-
+  "cashAmount": "مبلغ الكاش",
+  "size": "الحجم"
 }

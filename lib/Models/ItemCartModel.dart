@@ -42,6 +42,7 @@ class ItemCart {
       quantity: json["Qty"] ?? 0,  // Default to 0 if null
       orderId: int.tryParse(json["OrderID"]?.toString() ?? '') ?? -1,
       itemName: json["ItemName"] ?? " ",
+      itemSizeName: json["SizeLabel"] ?? "N/A",
     );
   }
 
