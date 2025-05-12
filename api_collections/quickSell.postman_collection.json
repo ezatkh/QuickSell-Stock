@@ -1,0 +1,433 @@
+{
+	"info": {
+		"_postman_id": "30d12c95-07bd-4cbc-a373-fcaca4471090",
+		"name": "quickSell",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20504047"
+	},
+	"item": [
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"admin\",\r\n    \"password\":\"0000\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://testing99-a48017231505.herokuapp.com/api/auth/login",
+					"protocol": "https",
+					"host": [
+						"testing99-a48017231505",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getStores",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://testing99-a48017231505.herokuapp.com/api/auth/Stores",
+					"protocol": "https",
+					"host": [
+						"testing99-a48017231505",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"api",
+						"auth",
+						"Stores"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getItems",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/StoreItems/1",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"StoreItems",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getTodayProfitReport",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/GetDailtProfit?startDate=2025-04-14&endDate=2025-04-15",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"GetDailtProfit"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-14"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-15"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getExpensesType",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/GetExp",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"GetExp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createExpenseOrder",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Idempotency",
+						"value": "550e8400-e29b-41d4-a716-446655440000",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"ExpID\": 3,\r\n    \"ExpDesc\": \"aaaa\",\r\n    \"TotalPrice\": 11000\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/CreateExpenses",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"CreateExpenses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createItemOrder",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Idempotency",
+						"value": "550e8400-e29b-41d4-a716-446655440000",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"order\":{\r\n        \"UserID\":\"Admin\",\r\n        \"orderItems\":[\r\n            {\r\n                \"itemId\":\"item101\",\r\n                \"quantity\":2,\r\n                \"unitPrice\":90.00,\r\n                \"ActualPrice\":50.00\r\n            }\r\n        ]\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/orders",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getExpensesOrderHistory",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/GetExpensesHistory?startDate=2025-04-14&endDate=2025-04-14",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"GetExpensesHistory"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-14"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-14"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getItemOrders",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/orders",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getItemOrdersItems",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/OrderItemsByOrderId/45",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"OrderItemsByOrderId",
+						"45"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getItemOrdersFilters",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/OrdersByDateRange?startDate=2025-04-15&endDate=2025-04-16",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"OrdersByDateRange"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-15"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-16"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getOrderItemsFilterDate",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/OrderItemsReport?startDate=2025-04-12&endDate=2025-04-13",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"OrderItemsReport"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-12"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-13"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
