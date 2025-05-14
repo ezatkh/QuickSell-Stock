@@ -29,8 +29,9 @@ class CartService {
 
     final requestOrderData = {
       "order": {
+        "TotalPrice":(totalCash+totalVisa),
         "totalAmountCash":totalCash,
-        "totalAmountVisa":totalVisa,
+        "VisaTotalPrice":totalVisa,
         "UserID": userId,
         "Status":"Sent",
         "orderItems": itemsList.map((item) {
@@ -39,7 +40,7 @@ class CartService {
             "quantity": item.quantity,
             "unitPrice": item.sellingPrice,
             "ActualPrice":item.purchasePrice,
-            "Size":item.itemSizeId
+            "Size":item.itemSizeId.toString()
           };
         }).toList()
       }

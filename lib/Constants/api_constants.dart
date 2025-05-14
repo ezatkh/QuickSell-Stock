@@ -4,14 +4,13 @@ class ApiConstants {
   static const String fetchStoresEndPoint = '$baseUrl/auth/Stores';
   static const String fetchExpensesEndPoint = '$baseUrl/GetExp';
   static const String fetchHistoryExpensesEndPoint = '$baseUrl/GetExpensesHistory';
-  static const String fetchStoreItemsEndPoint = '$baseUrl/StoreItems'; // need query param
-  static const String fetchItemSizesEndPoint = '$baseUrl/GetItemSizes'; // need query param
-  static const String createOrderEndPoint = '$baseUrl/orders'; //create order items
+  static const String fetchStoreItemsEndPoint = '$baseUrl/StoreItems';
+  static const String fetchItemSizesEndPoint = '$baseUrl/GetItemSizes';
+  static const String createOrderEndPoint = '$baseUrl/orders';
   static const String fetchOrdersEndPoint = '$baseUrl/OrdersByDateRange';
   static const String creatGetOrderByIdEndPoint = '$baseUrl/OrderItemsByOrderId';
   static const String createExpenseOrdersEndPoint = '$baseUrl/CreateExpenses';
   static const String fetchTodayProfitReportEndPoint = '$baseUrl/GetDailtProfit';
   static const String fetchAllOrderItemsReportEndPoint = '$baseUrl/OrderItemsReport';
-
 
 }

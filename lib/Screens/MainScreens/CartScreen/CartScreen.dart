@@ -228,7 +228,8 @@ class CartScreen extends StatelessWidget {
                         );
                         return;
                       }
-                      _showPaymentPopup(context, cartState.totalPrice, appLocalization);
+                      final rootContext = context;
+                      _showPaymentPopup(rootContext, cartState.totalPrice, appLocalization);
                     },
                   )
                       : const SizedBox(); // Hide checkout button when empty
@@ -242,17 +243,17 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  void _showPaymentPopup(BuildContext context, double total, LocalizationService localizationService) {
+  void _showPaymentPopup(BuildContext rootContext, double total, LocalizationService localizationService) {
     showDialog(
-      context: context,
-      builder: (context) {
+      context: rootContext,
+      builder: (dialogContext) {
         return PaymentMethodPopup(
           total: total,
           onSubmit: (method, cash, visa) async {
             print("Chosen method: $method");
             print("Cash: $cash, Visa: $visa");
             // Proceed with checkout
-            await _checkout(context, localizationService,cash,visa);
+            await _checkout(rootContext, localizationService,cash,visa);
           },
         );
       },
@@ -263,37 +264,37 @@ class CartScreen extends StatelessWidget {
   Future<void> _checkout(BuildContext context,LocalizationService localizationService,double totalCash,double totalVisa) async {
     showLoadingAvatar(context);
     final cartState = Provider.of<CartState>(context, listen: false);
-    for (var item in cartState.itemsList) {
-      print('purchasePrice: ${item.purchasePrice},,sellingPrice: ${item
-          .sellingPrice}, Quantity: ${item.quantity}');
-    }
-    print('Total Price: ${cartState.totalPrice}');
+
     try {
        await CartService.createOrder(context, cartState.itemsList,totalCash,totalVisa);
+
        Navigator.of(context).pop();
-      // Show success message
+       // Show success message
        ScaffoldMessenger.of(context).showSnackBar(
          SnackBar(
            content: Text("${localizationService.getLocalizedString("createOrderSuccess")}"),
            backgroundColor: Color(0xFF4CAF50),
          ),
        );
+
       cartState.clearState();
+
       Navigator.of(context).pushReplacement(
          _createRoute(MainScreen()), // Navigate to DashboardScreen on successful login
        );
 
     }
     catch (e) {
-      print("Error:${e}");
+      print("Error _checkout:${e}");
+      if (!context.mounted) return;
+      Navigator.of(context).pop();
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("${localizationService.getLocalizedString("createOrderFailed")}"),
+          content: Text("${localizationService.getLocalizedString("createOrderFailed")}:${e}"),
           backgroundColor: Color(0xFFD32F2F), // Custom red shade
         ),
       );
-      Navigator.of(context).pop();
-
     }
   }
 

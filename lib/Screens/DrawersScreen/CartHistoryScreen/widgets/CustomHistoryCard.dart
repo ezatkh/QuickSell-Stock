@@ -43,6 +43,7 @@ class _CustomHistoryCardState extends State<CustomHistoryCard> {
       child: Theme(
           data: ThemeData(dividerColor: Colors.transparent),
       child: ExpansionTile(
+          iconColor: AppColors.secondaryColor,
           backgroundColor: AppColors.backgroundColor,
           collapsedBackgroundColor: AppColors.backgroundColor,
           expandedCrossAxisAlignment: CrossAxisAlignment.start,

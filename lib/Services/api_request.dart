@@ -131,14 +131,14 @@ class ApiRequest {
       case 500:
         return {
           'success': false,
-          'error': 'Server error: ${response.statusCode}',
+          'error': 'Server error: ${response.body}',
           'status': response.statusCode,
         };
 
       default:
         return {
           'success': false,
-          'error': 'Error: ${response.statusCode}',
+          'error': 'Error: ${response.body}',
           'status': response.statusCode,
         };
     }
