@@ -25,6 +25,7 @@ class CustomTextField extends StatefulWidget {
     required this.backgroundColor,
     Key? key,
   }) : super(key: key);
+
   @override
   _CustomTextFieldState createState() => _CustomTextFieldState();
 }
@@ -46,26 +47,32 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final scale = (screenWidth / 390).clamp(0.85, 1.2);
+
     final textStyle = TextStyle(
-      fontSize: 16,
-      color: widget.textColor ?? Colors.black87,  // Use passed color or default
+      fontSize: 16 * scale,
+      color: widget.textColor,
       fontFamily: 'NotoSansUI',
     );
-    final hintStyle = TextStyle(color: widget.hintColor);  // Use passed color
-    final iconColor = widget.iconColor;  // Use passed color
-    final fillColor = widget.fillColor;  // Use passed color
-    final backgroundColor = widget.backgroundColor;  // Use passed color
-    final borderColor = widget.borderColor;  // Use passed color
+    final hintStyle = TextStyle(
+      color: widget.hintColor,
+      fontSize: 14 * scale,
+    );
+    final iconColor = widget.iconColor;
+    final fillColor = widget.fillColor;
+    final backgroundColor = widget.backgroundColor;
+    final borderColor = widget.borderColor;
 
     return DecoratedBox(
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(8 * scale),
         boxShadow: [
           BoxShadow(
             color: borderColor.withOpacity(0.2),
-            blurRadius: 5,
-            offset: Offset(0, 1),
+            blurRadius: 5 * scale,
+            offset: Offset(0, 1 * scale),
           ),
         ],
       ),
@@ -76,10 +83,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
         decoration: InputDecoration(
           hintText: widget.hint,
           hintStyle: hintStyle,
-          prefixIcon: Icon(widget.icon, color: iconColor),
+          prefixIcon: Icon(widget.icon, color: iconColor, size: 24 * scale),
           suffixIcon: widget.obscureText
               ? IconButton(
-            icon: Icon(_isObscured ? Icons.visibility_off : Icons.visibility),
+            icon: Icon(
+              _isObscured ? Icons.visibility_off : Icons.visibility,
+              size: 24 * scale,
+            ),
             color: iconColor,
             onPressed: _togglePasswordVisibility,
           )
@@ -87,10 +97,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
           filled: true,
           fillColor: fillColor,
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12), // Adjust to desired radius
-            borderSide: BorderSide(color: Colors.transparent, width: 0), // No visible border
+            borderRadius: BorderRadius.circular(12 * scale),
+            borderSide: BorderSide(color: Colors.transparent, width: 0),
           ),
-          contentPadding: const EdgeInsets.all(18.0),
+          contentPadding: EdgeInsets.symmetric(
+            vertical: 18.0 * scale,
+            horizontal: 16.0 * scale,
+          ),
         ),
       ),
     );

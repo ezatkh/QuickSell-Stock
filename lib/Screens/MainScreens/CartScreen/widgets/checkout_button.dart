@@ -11,6 +11,9 @@ class CheckoutButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appLocalization = Provider.of<LocalizationService>(context, listen: false);
+    final screenSize = MediaQuery.of(context).size;
+    final scale = (screenSize.width / 390).clamp(0.70, 1.2);
+
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
@@ -24,7 +27,10 @@ class CheckoutButton extends StatelessWidget {
         onPressed: onPressed,  // Use the passed in onPressed function
         child: Text(
           '${appLocalization.getLocalizedString("submit")} 🛒',
-          style: TextStyle(fontSize: 18, color: Colors.white),
+          style: TextStyle(
+            fontSize: 18 * scale,
+            color: Colors.white,
+          ),
         ),
       ),
     );

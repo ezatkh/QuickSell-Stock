@@ -1,64 +1,86 @@
 import 'package:flutter/material.dart';
-import '../../../../Constants/app_color.dart'; // Make sure the app colors are imported
+import '../../../../Constants/app_color.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
   final TextInputType keyboardType;
-  final bool required; // Add required field flag
-  final IconData? prefixIcon; // Add prefixIcon parameter
-  final int? maxLines; // Add maxLines parameter
+  final bool required;
+  final IconData? prefixIcon;
+  final int? maxLines;
 
-  // Constructor for the CustomTextField widget
   const CustomTextField({
     required this.controller,
     required this.labelText,
-    this.keyboardType = TextInputType.text, // Default to TextInputType.text if not specified
-    this.required = false, // Default to false if not specified
-    this.prefixIcon, // Optional prefixIcon
-    this.maxLines = 1, // Default to 1 line if not specified
+    this.keyboardType = TextInputType.text,
+    this.required = false,
+    this.prefixIcon,
+    this.maxLines = 1,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final scale = (screenWidth / 390).clamp(0.85, 1.2);
+
+    final fontSize = 14 * scale;
+    final borderRadius = 8.0 * scale;
+    final verticalPadding = 10.0 * scale;
+    final horizontalPadding = 8.0 * scale;
+    final iconSize = 20.0 * scale;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0),
+      padding: EdgeInsets.only(bottom: verticalPadding),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 2),
+        padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
         decoration: BoxDecoration(
           color: AppColors.cardBackgroundColor,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(borderRadius),
           boxShadow: [
             BoxShadow(
               color: AppColors.primaryColor.withOpacity(0.1),
-              spreadRadius: 1,
-              blurRadius: 2,
-              offset: const Offset(0, 3),
+              spreadRadius: 1 * scale,
+              blurRadius: 2 * scale,
+              offset: Offset(0, 3 * scale),
             ),
           ],
         ),
         child: TextFormField(
           controller: controller,
           keyboardType: keyboardType,
-          style: TextStyle(color: AppColors.primaryTextColor), // Text color from AppColors
-          cursorColor: AppColors.primaryColor, // Cursor color to match the theme
-          maxLines: maxLines, // Set max lines dynamically
+          style: TextStyle(color: AppColors.primaryTextColor, fontSize: fontSize),
+          cursorColor: AppColors.primaryColor,
+          maxLines: maxLines,
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.transparent, // Transparent background (since we already have a box decoration)
+            fillColor: Colors.transparent,
             labelText: labelText,
-            hintStyle: TextStyle(
-              color: Colors.grey, // Grey hint text
-              fontSize: 12, // Smaller hint text size
+            labelStyle: TextStyle(
+              color: AppColors.hintTextColor,
+              fontSize: fontSize,
             ),
-            prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null, // Prefix icon if provided
-            border: InputBorder.none,// No border here, since we are using box decoration
-            enabledBorder: InputBorder.none, // Ensures no border is visible when the field is enabled
-            focusedBorder: InputBorder.none, // Ensures no border is visible when the field is focused
-            errorBorder: InputBorder.none, // Ensures no border is visible when there is an error
-            focusedErrorBorder: InputBorder.none, // Ensures no border is visible when the field has error while focused
+            hintStyle: TextStyle(
+              color: Colors.grey,
+              fontSize: fontSize * 0.9,
+            ),
+            prefixIcon: prefixIcon != null
+                ? Icon(prefixIcon, size: iconSize, color: AppColors.primaryColor)
+                : null,
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            errorBorder: InputBorder.none,
+            focusedErrorBorder: InputBorder.none,
           ),
+          validator: required
+              ? (value) {
+            if (value == null || value.isEmpty) {
+              return 'This field is required';
+            }
+            return null;
+          }
+              : null,
         ),
       ),
     );

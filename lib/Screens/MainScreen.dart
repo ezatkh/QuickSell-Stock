@@ -49,11 +49,15 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     var appLocalization = Provider.of<LocalizationService>(context, listen: false);
     final storesState = Provider.of<StoresState>(context);
-
+    final screenSize = MediaQuery.of(context).size;
+    final scale = (screenSize.width / 390).clamp(0.8, 1.2);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("${storesState.selectedStore?["address"]}" ?? "Main Screen"),
+        title: Text(
+          "${storesState.selectedStore?["address"]}" ?? "Main Screen",
+          style: TextStyle(fontSize: 18 * scale),
+        ),
         backgroundColor: AppColors.cardBackgroundColor,
         elevation: 1,
       ),
@@ -75,19 +79,21 @@ class _MainScreenState extends State<MainScreen> {
           selectedItemColor: AppColors.primaryTextColor,
           unselectedItemColor: Colors.grey,
           showUnselectedLabels: true,
+          selectedLabelStyle: TextStyle(fontSize: 12 * scale),
+          unselectedLabelStyle: TextStyle(fontSize: 12 * scale),
           backgroundColor: AppColors.cardBackgroundColor,
           onTap: _onItemTapped,
           items:  [
             BottomNavigationBarItem(
-              icon: Icon(FontAwesomeIcons.store, size: 20),
+              icon: Icon(FontAwesomeIcons.store, size: 20 * scale),
               label: appLocalization.getLocalizedString("sales"),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.sell, size: 20),
+              icon: Icon(Icons.sell, size: 20 * scale),
               label:  appLocalization.getLocalizedString("expenses"),
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart, size: 20),
+              icon: Icon(Icons.shopping_cart, size: 20 * scale),
               label: appLocalization.getLocalizedString("cart"),
             ),
           ],
@@ -98,21 +104,31 @@ class _MainScreenState extends State<MainScreen> {
 
   // Use FutureBuilder to handle async data
   FutureBuilder<String?> _buildDrawer(BuildContext context,LocalizationService appLocalization) {
+    final screenSize = MediaQuery.of(context).size;
+    final scale = (screenSize.width / 390).clamp(0.8, 1.2);
+    final drawerWidth = (screenSize.width * 0.8).clamp(250.0, 320.0);
+
     return FutureBuilder<String?>(
       future: _getUserName(), // Fetch username from SharedPreferences
       builder: (context, snapshot) {
+        Widget drawerContent;
+
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Drawer(
+          drawerContent = Drawer(
             child: Center(child: CircularProgressIndicator()),
           ); // Loading state
         } else if (snapshot.hasError) {
-          return Drawer(
-            child: Center(child: Text(appLocalization.getLocalizedString("errorLoadingData"))),
+          drawerContent = Drawer(
+            child: Center(child:
+            Text(
+              appLocalization.getLocalizedString("errorLoadingData"),
+              style: TextStyle(fontSize: 14 * scale),
+            ),
+            ),
           ); // Error state
         } else if (snapshot.hasData) {
           final userName = snapshot.data;
-
-          return Drawer(
+          drawerContent = Drawer(
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
@@ -121,7 +137,7 @@ class _MainScreenState extends State<MainScreen> {
                   accountEmail: Text(""),
                   currentAccountPicture: CircleAvatar(
                     backgroundColor: AppColors.backgroundColor,
-                    child: Icon(Icons.person, size: 50, color: Colors.black),
+                    child: Icon(Icons.person, size: 50 * scale, color: Colors.black),
                   ),
                   decoration: const BoxDecoration(color: AppColors.primaryColor),
                 ),
@@ -189,10 +205,14 @@ class _MainScreenState extends State<MainScreen> {
             ),
           );
         } else {
-          return Drawer(
-            child: Center(child: Text(appLocalization.getLocalizedString("noDataAvailable"))),
-          ); // No data state
+          drawerContent = Center(child: Text(appLocalization.getLocalizedString("noDataAvailable"), style: TextStyle(fontSize: 14 * scale)));
         }
+        return SizedBox(
+          width: drawerWidth,
+          child: Drawer(
+            child: drawerContent,
+          ),
+        );
       },
     );
   }

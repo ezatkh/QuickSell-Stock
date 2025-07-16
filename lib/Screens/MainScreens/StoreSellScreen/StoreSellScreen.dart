@@ -48,11 +48,9 @@ class _StoreSellScreenState extends State<StoreSellScreen> {
       if (query.isEmpty) {
         filteredItems = List.from(originalList);
       } else {
-        filteredItems = originalList
-            .where((item) =>
-        item.sellingPrice.toString().contains(query) ||
-            item.purchasePrice.toString().contains(query))
-            .toList();
+        filteredItems = originalList.where((item) =>
+            item.itemName.toString().toLowerCase().contains(query.toLowerCase())
+        ).toList();
       }
     });
   }

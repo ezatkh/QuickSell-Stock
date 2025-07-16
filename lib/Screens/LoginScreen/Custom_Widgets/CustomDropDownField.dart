@@ -37,18 +37,20 @@ class CustomDropdownField<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDisabled = items.isEmpty;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final scale = (screenWidth / 390).clamp(0.70, 1.2);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 16 * scale,
             fontWeight: FontWeight.bold,
             color: textColor,
           ),
         ),
-        SizedBox(height: 8),
+        SizedBox(height: 8 * scale),
         Container(
           decoration: BoxDecoration(
             color: backgroundColor,
@@ -61,15 +63,14 @@ class CustomDropdownField<T> extends StatelessWidget {
               ),
             ],
           ),
-          padding: EdgeInsets.symmetric(horizontal: 12),
+          padding: EdgeInsets.symmetric(horizontal: 12 * scale),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<T>(
               value: selectedValue,
               isExpanded: isExpanded,
-              // hint: Text(hint, style: TextStyle(color: hintColor)),
               hint: Text(
                 isDisabled ? "No options available" : hint,
-                style: TextStyle(color: hintColor),
+                style: TextStyle(color: hintColor, fontSize: 14 * scale),
               ),
               onChanged: onChanged,
               items: items.map((T value) {
@@ -77,15 +78,14 @@ class CustomDropdownField<T> extends StatelessWidget {
                   value: value,
                   child: Text(
                     itemLabel != null ? itemLabel!(value) : value.toString(),
-                    style: TextStyle(color: textColor),
+                    style: TextStyle(color: textColor, fontSize: 14 * scale),
                   ),
                 );
               }).toList(),
               iconEnabledColor: arrowColor,
               disabledHint: Text(
                 Provider.of<LocalizationService>(context, listen: false).getLocalizedString("noDataAvailable"),//noDataAvailable
-                style: TextStyle(color: hintColor,
-                  fontSize: 14,  ),
+                style: TextStyle(color: hintColor, fontSize: 14 * scale),
               ),
             ),
           ),

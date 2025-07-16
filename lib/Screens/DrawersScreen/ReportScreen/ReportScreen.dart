@@ -57,85 +57,6 @@ class _ReportScreenState extends State<ReportScreen> {
     }
   }
 
-  // Button actions
-  Future<void> createExpensesReportPressed(LocalizationService appLocalization) async {
-      bool isConnected = await checkConnectivity();
-      if (!isConnected) {
-        showLoginFailedDialog(
-          context,
-          appLocalization.getLocalizedString('noInternetConnection'),
-          appLocalization.getLocalizedString('noInternet'),
-          appLocalization.selectedLanguageCode,
-          appLocalization.getLocalizedString('ok'),
-        );
-        return;
-      }
-
-      try {
-        showLoadingAvatar(context);
-
-        String formattedFromDate = DateFormat('yyyy-MM-dd').format(fromDate);
-        String formattedToDate = DateFormat('yyyy-MM-dd').format(toDate);
-        print("Generating Sales Report from $formattedFromDate to $formattedToDate");
-
-        // Fetch the history expenses list
-        List<ExpensesItemModel> historyExpensesList = await ExpensesService.fetchHistoryExpenses(context, formattedFromDate, formattedToDate);
-        print("historyExpensesList: $historyExpensesList");
-        Navigator.pop(context);
-        prepareExpensesPDF(historyExpensesList,formattedFromDate,formattedToDate);
-      } catch (e) {
-        Navigator.pop(context); // ✅ Pop after failure
-        print('Error generating expenses report: $e');
-        // You can show an error dialog or display a message in the UI based on the exception
-        await showLoginFailedDialog(
-          context,
-          appLocalization.getLocalizedString('reportGenerationFailed'),
-          appLocalization.getLocalizedString('tryAgain'),
-          appLocalization.selectedLanguageCode,
-          appLocalization.getLocalizedString('ok'),
-        );
-      }
-  }
-
-  Future<void> createSalesReportPressed(LocalizationService appLocalization)async {
-    bool isConnected = await checkConnectivity();
-    if (!isConnected) {
-      showLoginFailedDialog(
-        context,
-        appLocalization.getLocalizedString('noInternetConnection'),
-        appLocalization.getLocalizedString('noInternet'),
-        appLocalization.selectedLanguageCode,
-        appLocalization.getLocalizedString('ok'),
-      );
-      return;
-    }
-
-    try {
-      showLoadingAvatar(context);
-      String formattedFromDate = DateFormat('yyyy-MM-dd').format(fromDate);
-      String formattedToDate = DateFormat('yyyy-MM-dd').format(toDate);
-      print("Generating Sales Report from $formattedFromDate to $formattedToDate");
-
-      // Fetch the history expenses list
-      List<ItemCart> historySalesList = await CartService.fetchAllOrderItemsReport(context, formattedFromDate, formattedToDate);
-      print("historySalesList: $historySalesList");
-      // Call the method to prepare the PDF
-      Navigator.pop(context); // Remove the loading avatar
-      prepareSalesPDF(historySalesList,formattedFromDate,formattedToDate);
-    } catch (e) {
-      Navigator.pop(context); // Remove the loading avatar
-      print('Error generating expenses report: $e');
-      // You can show an error dialog or display a message in the UI based on the exception
-      await showLoginFailedDialog(
-        context,
-        appLocalization.getLocalizedString('reportGenerationFailed'),
-        appLocalization.getLocalizedString('tryAgain'),
-        appLocalization.selectedLanguageCode,
-        appLocalization.getLocalizedString('ok'),
-      );
-    }
-
-  }
 
   Future<void> prepareSalesPDF(List<ItemCart> salesList,String dateFrom,String dateTo) async {
     print("Preparing sales PDF with ${salesList.length} items.");
@@ -146,6 +67,9 @@ class _ReportScreenState extends State<ReportScreen> {
       // Create a PDF document
       final pdf = pw.Document();
       double totalSum = 0;
+      double differenceSum = 0;
+      double differenceColumn = 0;
+
 
       // Add a page to the document
       pdf.addPage(
@@ -200,10 +124,11 @@ class _ReportScreenState extends State<ReportScreen> {
                   pw.Row(
                     children: [
                       _buildCell("المجموع", font, 2),
+                      _buildCell("الربح الصافي", font, 2),
                       _buildCell("الكمية", font, 2),
-                      _buildCell("سعر البيع", font, 3),
+                      _buildCell("سعر البيع", font, 2),
                       _buildCell("سعر الشراء", font, 2),
-                      _buildCell("الحجم", font, 2),
+                      // _buildCell("الحجم", font, 2),
                       _buildCell("الاسم", font, 2),
                       _buildCell("#", font, 1),
                     ],
@@ -213,13 +138,17 @@ class _ReportScreenState extends State<ReportScreen> {
                         () {
                       final rowTotal = salesList[i].sellingPrice * salesList[i].quantity;
                       totalSum += rowTotal;
+                      differenceColumn=0;
+                      differenceColumn +=(salesList[i].sellingPrice - salesList[i].purchasePrice) * salesList[i].quantity;
+                      differenceSum += differenceColumn;
                       return pw.Row(
                         children: [
                           _buildCell(rowTotal.toStringAsFixed(2), font, 2),
+                          _buildCell(differenceColumn.toStringAsFixed(2), font, 2),
                           _buildCell(salesList[i].quantity.toString(), font, 2),
-                          _buildCell(salesList[i].sellingPrice.toStringAsFixed(2), font, 3),
+                          _buildCell(salesList[i].sellingPrice.toStringAsFixed(2), font, 2),
                           _buildCell(salesList[i].purchasePrice.toStringAsFixed(2), font, 2),
-                          _buildCell(salesList[i].itemSizeName.toString(), font, 2),
+                          // _buildCell(salesList[i].itemSizeName.toString(), font, 2),
                           _buildCell(salesList[i].itemName.toString(), font, 2),
                           _buildCell((i + 1).toString(), font, 1),
                         ],
@@ -229,7 +158,8 @@ class _ReportScreenState extends State<ReportScreen> {
                   pw.Row(
                     children: [
                       _buildCell(totalSum.toStringAsFixed(2), font, 2),
-                      _buildCell('السعر الكلي: ', font, 12), // Merged big cell
+                      _buildCell(differenceSum.toStringAsFixed(2), font, 2),
+                      _buildCell('المجموع ', font, 9), // Merged big cell
                     ],
                   ),
                 ],
@@ -242,7 +172,7 @@ class _ReportScreenState extends State<ReportScreen> {
       // Get the temporary directory to save the PDF
       final tempDir = await getTemporaryDirectory();
       // final pdfPath = '${tempDir.path}/${salesList.orderId!}_${DateTime.now().toString().split(' ')[0]}.pdf';
-       final pdfPath = '${tempDir.path}/${DateTime.now().toString().split(' ')[0]}.pdf';
+      final pdfPath = '${tempDir.path}/${DateTime.now().toString().split(' ')[0]}.pdf';
       // Delete any existing PDF files in the temporary directory
       final pdfDir = Directory(tempDir.path);
       if (await pdfDir.exists()) {
@@ -336,8 +266,8 @@ class _ReportScreenState extends State<ReportScreen> {
 
                   for (int i = 0; i < expensesList.length; i++) ...[
                         () {
-                          totalSum += expensesList[i].price;
-                          return pw.Row(
+                      totalSum += expensesList[i].price;
+                      return pw.Row(
                         children: [
                           _buildCell(expensesList[i].price.toStringAsFixed(2), font, 2),
                           _buildCell(
@@ -407,7 +337,85 @@ class _ReportScreenState extends State<ReportScreen> {
     }
 
   }
+  // Button actions
+  Future<void> createExpensesReportPressed(LocalizationService appLocalization) async {
+      bool isConnected = await checkConnectivity();
+      if (!isConnected) {
+        showLoginFailedDialog(
+          context,
+          appLocalization.getLocalizedString('noInternetConnection'),
+          appLocalization.getLocalizedString('noInternet'),
+          appLocalization.selectedLanguageCode,
+          appLocalization.getLocalizedString('ok'),
+        );
+        return;
+      }
 
+      try {
+        showLoadingAvatar(context);
+
+        String formattedFromDate = DateFormat('yyyy-MM-dd').format(fromDate);
+        String formattedToDate = DateFormat('yyyy-MM-dd').format(toDate);
+        print("Generating Sales Report from $formattedFromDate to $formattedToDate");
+
+        // Fetch the history expenses list
+        List<ExpensesItemModel> historyExpensesList = await ExpensesService.fetchHistoryExpenses(context, formattedFromDate, formattedToDate);
+        print("historyExpensesList: $historyExpensesList");
+        Navigator.pop(context);
+        prepareExpensesPDF(historyExpensesList,formattedFromDate,formattedToDate);
+      } catch (e) {
+        Navigator.pop(context); // ✅ Pop after failure
+        print('Error generating expenses report: $e');
+        // You can show an error dialog or display a message in the UI based on the exception
+        await showLoginFailedDialog(
+          context,
+          appLocalization.getLocalizedString('reportGenerationFailed'),
+          appLocalization.getLocalizedString('tryAgain'),
+          appLocalization.selectedLanguageCode,
+          appLocalization.getLocalizedString('ok'),
+        );
+      }
+  }
+
+  Future<void> createSalesReportPressed(LocalizationService appLocalization)async {
+    bool isConnected = await checkConnectivity();
+    if (!isConnected) {
+      showLoginFailedDialog(
+        context,
+        appLocalization.getLocalizedString('noInternetConnection'),
+        appLocalization.getLocalizedString('noInternet'),
+        appLocalization.selectedLanguageCode,
+        appLocalization.getLocalizedString('ok'),
+      );
+      return;
+    }
+
+    try {
+      showLoadingAvatar(context);
+      String formattedFromDate = DateFormat('yyyy-MM-dd').format(fromDate);
+      String formattedToDate = DateFormat('yyyy-MM-dd').format(toDate);
+      print("Generating Sales Report from $formattedFromDate to $formattedToDate");
+
+      // Fetch the history expenses list
+      List<ItemCart> historySalesList = await CartService.fetchAllOrderItemsReport(context, formattedFromDate, formattedToDate);
+      print("historySalesList: $historySalesList");
+      // Call the method to prepare the PDF
+      Navigator.pop(context); // Remove the loading avatar
+      prepareSalesPDF(historySalesList,formattedFromDate,formattedToDate);
+    } catch (e) {
+      Navigator.pop(context); // Remove the loading avatar
+      print('Error generating expenses report: $e');
+      // You can show an error dialog or display a message in the UI based on the exception
+      await showLoginFailedDialog(
+        context,
+        appLocalization.getLocalizedString('reportGenerationFailed'),
+        appLocalization.getLocalizedString('tryAgain'),
+        appLocalization.selectedLanguageCode,
+        appLocalization.getLocalizedString('ok'),
+      );
+    }
+
+  }
 
   pw.Widget _buildCell(String text, pw.Font font, int flex) {
     return pw.Expanded(
@@ -429,52 +437,57 @@ class _ReportScreenState extends State<ReportScreen> {
   @override
   Widget build(BuildContext context) {
     var appLocalization = Provider.of<LocalizationService>(context, listen: false);
+    final screenSize = MediaQuery.of(context).size;
+    final scale = (screenSize.width / 390).clamp(0.7, 1.2);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          appLocalization.getLocalizedString('reportScreen'), // More professional name
-          textAlign: TextAlign.center, // Center the title
+          appLocalization.getLocalizedString('reportScreen'),
+          textAlign: TextAlign.center,
           style: TextStyle(
-            color: AppColors.lighterTextColor, // Text color from AppColors
+            color: AppColors.lighterTextColor,
+            fontSize: 18 * scale,
           ),
         ),
         backgroundColor: AppColors.primaryColor,
         iconTheme: IconThemeData(
-          color: AppColors.lighterTextColor, // Set the back arrow color to match text color
+          color: AppColors.lighterTextColor,
+          size: 24 * scale,
         ),
+        toolbarHeight: 56 * scale,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Filter Area: Date From and Date To
-            CustomFilterArea(
-              appLocalization: appLocalization,
-              onDateRangeSelected: (DateTime selectedFromDate, DateTime selectedToDate) {
-                setState(() {
-                  fromDate = selectedFromDate;
-                  toDate = selectedToDate;
-                });
-              },
-            ),
-            const SizedBox(height: 20),
-
-
-            CustomReportButton(
-              onPressed1: () => createExpensesReportPressed(appLocalization),
-              onPressed2: () => createSalesReportPressed(appLocalization),
-            ),
-            const Spacer(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomFilterArea(
+                appLocalization: appLocalization,
+                onDateRangeSelected: (DateTime selectedFromDate, DateTime selectedToDate) {
+                  setState(() {
+                    fromDate = selectedFromDate;
+                    toDate = selectedToDate;
+                  });
+                },
+              ),
+              const SizedBox(height: 20),
+              CustomReportButton(
+                onPressed1: () => createExpensesReportPressed(appLocalization),
+                onPressed2: () => createSalesReportPressed(appLocalization),
+              ),
+              const SizedBox(height: 30),
               CustomTotalsSummaryArea(
                 expenses: totalExpenses,
                 sales: totalSales,
-                isLoading:isLoading
+                isLoading: isLoading,
               ),
             ],
+          ),
         ),
       ),
     );
   }
+
 }

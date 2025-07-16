@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 import '../../../../Constants/app_color.dart';
 import '../../../../Services/LocalizationService.dart';
@@ -21,11 +22,11 @@ class CustomTotalsSummaryArea extends StatelessWidget {
     int net = sales - expenses;
 
     return Container(
-      margin: const EdgeInsets.only(top: 20),
+      margin: EdgeInsets.only(top: 20.h),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: AppColors.secondaryColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r), // scaled borderRadius
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
@@ -47,31 +48,31 @@ class CustomTotalsSummaryArea extends StatelessWidget {
 
   Widget _buildSummaryRow(String label, int amount,isLoading, {bool isBold = false}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: EdgeInsets.symmetric(vertical: 4.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
               Text(
               label,
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 18.sp,
                 color: AppColors.primaryColor, // Set text color to green
                 fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
               ),
             ),
           isLoading
               ? SizedBox(
-            width: 20.0, // Set width of the loading spinner
-            height: 20.0, // Set height of the loading spinner
+              width: 20.w,
+            height: 20.0.h,
             child: const CircularProgressIndicator(
-              strokeWidth: 2.0, // Reduce the thickness of the spinner
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryColor), // Set color to green
+              strokeWidth: 2.0,
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryColor),
             ),
           )
               : Text(
-            '${amount == 0 ? 'N/A' : amount.toStringAsFixed(2)}', // Show the actual value when not loading
+            '${amount == 0 ? 'N/A' : amount.toStringAsFixed(2)}',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 18.sp, // scaled font size
               color: AppColors.primaryColor, // Set text color to green
               fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
             ),

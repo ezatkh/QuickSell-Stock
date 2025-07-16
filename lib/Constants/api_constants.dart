@@ -12,5 +12,4 @@ class ApiConstants {
   static const String createExpenseOrdersEndPoint = '$baseUrl/CreateExpenses';
   static const String fetchTodayProfitReportEndPoint = '$baseUrl/GetDailtProfit';
   static const String fetchAllOrderItemsReportEndPoint = '$baseUrl/OrderItemsReport';
-
 }

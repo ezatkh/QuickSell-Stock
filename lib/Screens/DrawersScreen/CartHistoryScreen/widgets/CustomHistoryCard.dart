@@ -55,7 +55,7 @@ class _CustomHistoryCardState extends State<CustomHistoryCard> {
                 DateHelper.formatTransactionDate(widget.transactionDate),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 14.0,
+                  fontSize: 14.sp,  // scaled font size
                   color: AppColors.primaryTextColor,
                 ),
               ),
@@ -63,7 +63,7 @@ class _CustomHistoryCardState extends State<CustomHistoryCard> {
                 widget.id.toString(),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 14.0,
+                  fontSize: 14.sp,  // scaled font size
                   color: AppColors.primaryTextColor,
                 ),
               ),
@@ -108,10 +108,11 @@ class _CustomHistoryCardState extends State<CustomHistoryCard> {
                         onPressed: () async {
                           _handleOrderItemsFetch(context,appLocalization);
                         },
-                        icon: Icon(Icons.visibility), // Use an eye icon for the "View" action
+                        icon: Icon(Icons.visibility,
+                          size: 28.sp,  // scaled icon size
+                        ), // Use an eye icon for the "View" action
                         color: AppColors.secondaryColor, // Set the icon color
                         tooltip: '${appLocalization.getLocalizedString('view')}', // Tooltip for accessibility
-
                       ),
                     ],
                   )

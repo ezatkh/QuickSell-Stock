@@ -86,18 +86,31 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   @override
   Widget build(BuildContext context) {
     var appLocalization = Provider.of<LocalizationService>(context, listen: false);
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final baseWidth = 390.0;
+    final scale = (screenWidth / baseWidth).clamp(0.70, 1.2);
+
+    final fontSizeSmall = 14 * scale;
+    final fontSizeMedium = 16 * scale;
+    final spacing = 12 * scale;
+    final buttonWidth = 120 * scale;
+    final buttonHeight = 45 * scale;
+    final borderRadius = 16 * scale;
+
     return Directionality(
       textDirection: appLocalization.selectedLanguageCode == 'ar'
-          ? TextDirection.rtl  // Arabic (Right-to-left)
-          : TextDirection.ltr,      child: Padding(
+          ? TextDirection.rtl
+          : TextDirection.ltr,
+      child: Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: Container(
-          padding: const EdgeInsets.all(8.0),
-          decoration: const BoxDecoration(
+          padding: EdgeInsets.all(spacing),
+          decoration:  BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+              topLeft: Radius.circular(borderRadius),
+              topRight: Radius.circular(borderRadius),
             ),
           ),
           child: SingleChildScrollView(
@@ -117,23 +130,23 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                       Spacer(),
                       Text(
                         appLocalization.getLocalizedString('confirmSellTitle'),
-                        style: const TextStyle(
-                          fontSize: 20,
+                        style:  TextStyle(
+                          fontSize: fontSizeMedium,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(width: 24),
+                      SizedBox(width: spacing),
                       Spacer(),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: spacing),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         '${appLocalization.getLocalizedString('name')}: ${widget.item.itemName}',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: fontSizeSmall,
                           color: Colors.grey,
                         ),
                       ),
@@ -141,20 +154,20 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                       Text(
                         '${appLocalization.getLocalizedString('sellingPrice')}: ${widget.item.sellingPrice}',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: fontSizeSmall,
                           color: Colors.grey,
                         ),
                       ),
                       Text(
                         '${appLocalization.getLocalizedString('purchasePrice')}: ${widget.item.purchasePrice}',
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: fontSizeSmall,
                           color: Colors.grey,
                         ),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: spacing),
                   CustomTextField(
                     controller: _offerPriceController,
                     labelText: appLocalization.getLocalizedString('offerPrice'),
@@ -169,13 +182,13 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                   if(sizeError)...[
                     Text(
                       appLocalization.getLocalizedString('quantityExceedsAvailable'),
-                      style: const TextStyle(
+                      style:  TextStyle(
                         color: AppColors.errorColor,
                         fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                        fontSize: fontSizeSmall,
                       ),
                     ),
-                  const SizedBox(height: 10),
+                    SizedBox(height: spacing),
                   ],
                   FutureBuilder<List<ItemSizeModel>>(
                     future: _itemSizesFuture,
@@ -189,19 +202,17 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                       }
                       else {
                         final sizes = snapshot.data!;
-
-                        // Auto-select the first size if none selected yet
                         _selectedSize ??= sizes.first;
 
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 10),
+                            SizedBox(height: spacing),
                             Theme(
                               data: Theme.of(context).copyWith(
-                                canvasColor: Colors.grey[200],         // Background of dropdown menu
-                                highlightColor: Colors.transparent,    // Remove yellow highlight
-                                splashColor: Colors.transparent,       // Remove splash on tap
+                                canvasColor: Colors.grey[200],
+                                highlightColor: Colors.transparent,
+                                splashColor: Colors.transparent,
                               ),
                               child: DropdownButtonFormField<ItemSizeModel>(
                                 value: _selectedSize,
@@ -209,13 +220,19 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                                   filled: true,
                                   fillColor: AppColors.cardBackgroundColor,
                                   border: OutlineInputBorder(),
-                                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: spacing,
+                                    vertical: 10,
+                                  ),
                                 ),
                                 dropdownColor: Colors.white,
                                 items: sizes.map((size) {
                                   return DropdownMenuItem<ItemSizeModel>(
                                     value: size,
-                                    child: Text('${size.sizeLabel} - ${appLocalization.getLocalizedString('quantity')}: ${size.quantity}'),
+                                    child: Text(
+                                      '${size.sizeLabel} - ${appLocalization.getLocalizedString('quantity')}: ${size.quantity}',
+                                      style: TextStyle(fontSize: fontSizeSmall),
+                                    ),
                                   );
                                 }).toList(),
                                 onChanged: (value) {
@@ -231,13 +248,13 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                                 },
                               ),
                             ),
-                            const SizedBox(height: 10),
+                            SizedBox(height: spacing),
                             Center(
                               child: ElevatedButton(
                                 onPressed: _confirmSale,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: AppColors.primaryColor,
-                                  minimumSize: Size(120, 45),
+                                  minimumSize: Size(buttonWidth, buttonHeight),
                                 ),
                                 child: Text(
                                   appLocalization.getLocalizedString('confirmSale'),

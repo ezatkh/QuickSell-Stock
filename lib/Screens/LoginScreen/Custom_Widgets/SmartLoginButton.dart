@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SmartLoginButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -16,18 +17,34 @@ class SmartLoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ScreenUtil.init(context, designSize: const Size(360, 690), minTextAdapt: true);
+
+    final screenWidth = ScreenUtil().screenWidth;
+    final scale = (screenWidth / 390).clamp(0.70, 1.2);
+
+    final scaledButtonWidth = buttonWidth * scale;
+    final scaledVerticalPadding = 14.0 * scale;
+    final scaledHorizontalPadding = 24.0 * scale;
+    final iconSize = 30.0 * scale;
+    final iconSpacing = 12.0 * scale;
+    final borderRadius = 12.0 * scale;
+
     return ConstrainedBox(
       constraints: BoxConstraints(
-        maxWidth: buttonWidth, // Set maximum width to the provided value
+        maxWidth: scaledButtonWidth,
+        minWidth: scaledButtonWidth,
       ),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: buttonColor,
-          padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 24.0),
-          minimumSize: const Size(150, 60), // Minimum size to keep button consistent
+          padding: EdgeInsets.symmetric(
+            vertical: scaledVerticalPadding,
+            horizontal: scaledHorizontalPadding,
+          ),
+          minimumSize: Size(scaledButtonWidth, 60 * scale),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12.0),
+            borderRadius: BorderRadius.circular(borderRadius),
           ),
         ),
         child: Row(
@@ -35,13 +52,13 @@ class SmartLoginButton extends StatelessWidget {
           children: [
             Icon(
               Icons.fingerprint,
-              size: 30,
+              size: iconSize,
               color: iconColor,
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: iconSpacing),
             Icon(
               Icons.face,
-              size: 30,
+              size: iconSize,
               color: iconColor,
             ),
           ],

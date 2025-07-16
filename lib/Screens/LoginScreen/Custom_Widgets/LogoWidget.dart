@@ -5,8 +5,12 @@ class LogoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double logoWidth = MediaQuery.of(context).size.width * 0.4;
-    final double logoHeight = MediaQuery.of(context).size.height * 0.25;
+    final screenSize = MediaQuery.of(context).size;
+    final scale = (screenSize.width / 390).clamp(0.85, 1.2);
+
+    final double logoWidth = 156 * scale;
+    final double logoHeight = 172 * scale;
+
 
     return Center(
       child: Image.asset(

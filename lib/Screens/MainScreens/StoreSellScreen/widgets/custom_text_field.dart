@@ -18,43 +18,53 @@ class CustomTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final scale = (screenWidth / 390).clamp(0.85, 1.2);
+
+    final fontSize = 14 * scale;
+    final borderRadius = 10.0 * scale;
+    final paddingV = 12.0 * scale;
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0),
+      padding: EdgeInsets.only(bottom: paddingV),
       child: TextFormField(
         controller: controller,
         keyboardType: keyboardType,
-        style: TextStyle(color: AppColors.primaryTextColor), // Text color from AppColors
-        cursorColor: AppColors.primaryColor, // Cursor color to match the theme
+        style: TextStyle(
+          color: AppColors.primaryTextColor,
+          fontSize: fontSize,
+        ),
+        cursorColor: AppColors.primaryColor,
         decoration: InputDecoration(
           filled: true,
-          fillColor: AppColors.cardBackgroundColor, // White background from AppColors
+          fillColor: AppColors.cardBackgroundColor,
           labelText: labelText,
           labelStyle: TextStyle(
-            color: AppColors.hintTextColor, // Label color from AppColors
-            fontSize: 14, // Larger label text
+            color: AppColors.hintTextColor,
+            fontSize: fontSize,
           ),
           hintStyle: TextStyle(
-            color: Colors.grey, // Grey hint text
-            fontSize: 14, // Smaller hint text size
+            color: Colors.grey,
+            fontSize: fontSize - 1,
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8), // Rounded corners
+            borderRadius: BorderRadius.circular(borderRadius),
             borderSide: BorderSide(
-              color: AppColors.primaryColor, // Border color from AppColors
+              color: AppColors.primaryColor,
               width: 1,
             ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8), // Rounded corners when focused
+            borderRadius: BorderRadius.circular(borderRadius),
             borderSide: BorderSide(
-              color: AppColors.primaryColor, // Focused border color
-              width: 2, // Thicker border on focus
+              color: AppColors.primaryColor,
+              width: 2,
             ),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8), // Rounded corners for enabled state
+            borderRadius: BorderRadius.circular(borderRadius),
             borderSide: BorderSide(
-              color: AppColors.primaryColor, // Enabled border color
+              color: AppColors.primaryColor,
               width: 1,
             ),
           ),

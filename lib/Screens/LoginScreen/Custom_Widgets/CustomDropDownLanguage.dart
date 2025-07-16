@@ -20,8 +20,10 @@ class CustomDropDown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final scale = (screenWidth / 390).clamp(0.70, 1.2);
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: EdgeInsets.symmetric(horizontal: 16.0 * scale),
       child: GestureDetector(
         onTap: () {
           // Open the PopupMenu when the Row is tapped
@@ -39,7 +41,7 @@ class CustomDropDown extends StatelessWidget {
                 child: ListTile(
                   title: Text(
                     language['name']!,
-                    style: TextStyle(fontSize: 16.0),
+                    style: TextStyle(fontSize: 16.0 * scale),
                   ),
                 ),
               );
@@ -47,12 +49,13 @@ class CustomDropDown extends StatelessWidget {
           },
           child: Row(
             children: [
-              Icon(Icons.language, color: AppColors.cardBackgroundColor,),
-              SizedBox(width: 8.0),
+              Icon(Icons.language, color: AppColors.cardBackgroundColor, size: 24.0 * scale),
+              SizedBox(width: 8.0 * scale),
           Text(
             getLanguageName(localizationService.selectedLanguageCode),
             style: TextStyle(
-              color: AppColors.cardBackgroundColor, // Set the text color to primary text color
+              color: AppColors.cardBackgroundColor,
+              fontSize: 16.0 * scale,
             ),
           ),
             ],

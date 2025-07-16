@@ -19,12 +19,15 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appLocalization = Provider.of<LocalizationService>(context, listen: false);
+    final screenSize = MediaQuery.of(context).size;
+    final scale = (screenSize.width / 390).clamp(0.70, 1.2);
+    final scale2 = (screenSize.width / 390).clamp(0.70, double.infinity);
 
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(4.0),
+          padding: EdgeInsets.all(4.0 * scale),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -32,21 +35,20 @@ class CartScreen extends StatelessWidget {
                 child: Consumer<CartState>(
                   builder: (context, cartState, child) {
                     if (cartState.itemsList.isEmpty) {
-                      // Display an empty cart message when no items exist
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
                               Icons.shopping_cart_outlined,
-                              size: 80,
+                              size: 80 * scale,
                               color: Colors.grey[400],
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16 * scale),
                             Text(
                               appLocalization.getLocalizedString("emptyCart"),
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 18 * scale,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.grey[600],
                               ),
@@ -56,107 +58,53 @@ class CartScreen extends StatelessWidget {
                       );
                     }
 
-                    return Column(
-                      children: [
-                        // Add header row for the table
-                        Table(
-                          columnWidths: {
-                            0: FlexColumnWidth(1.5), // "Name" column
-                            1: FlexColumnWidth(1), // "Actual Price" column
-                            2: FlexColumnWidth(1), // "Price" column
-                            3: FlexColumnWidth(1), // "Size" column
-                            4: FlexColumnWidth(2), // "Actions" column
-                          },
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: SizedBox(
+                        width: 390 * scale2,
+                        child: Column(
                           children: [
-                            TableRow(
+                            Table(
+                              columnWidths: {
+                                0: FlexColumnWidth(1.5),
+                                1: FlexColumnWidth(1),
+                                2: FlexColumnWidth(1),
+                                3: FlexColumnWidth(2),
+                              },
                               children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Center( // Center the header text vertically
-                                    child: Text(
-                                      appLocalization.getLocalizedString(
-                                          "name"), // Header for price
-                                      style: TextStyle(fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Center( // Center the header text vertically
-                                    child: Text(
-                                      appLocalization.getLocalizedString(
-                                          "sellingPrice"), // Header for price
-                                      style: TextStyle(fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Center( // Center the header text vertically
-                                    child: Text(
-                                      appLocalization.getLocalizedString(
-                                          "actualPrice"),
-                                      // Header for store name or item type
-                                      style: TextStyle(fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Center( // Center the header text vertically
-                                    child: Text(
-                                      appLocalization.getLocalizedString(
-                                          "Stock"),
-                                      // Header for store name or item type
-                                      style: TextStyle(fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Center( // Center the header text vertically
-                                    child: Text(
-                                      appLocalization.getLocalizedString(
-                                          "actions"),
-                                      // Header for actions (quantity control)
-                                      style: TextStyle(fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                    ),
-                                  ),
+                                TableRow(
+                                  children: [
+                                    _buildTableHeaderCell(appLocalization.getLocalizedString("name"), scale),
+                                    _buildTableHeaderCell(appLocalization.getLocalizedString("sellingPrice"), scale),
+                                    _buildTableHeaderCell(appLocalization.getLocalizedString("actualPrice"), scale),
+                                    _buildTableHeaderCell(appLocalization.getLocalizedString("actions"), scale),
+                                  ],
                                 ),
                               ],
                             ),
+
+                            const SizedBox(height: 4),
+
+                            // Scrollable item list
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount: cartState.itemsList.length,
+                                itemBuilder: (context, index) {
+                                  final item = cartState.itemsList[index];
+                                  return CartItem(
+                                    item: item,
+                                    isLastItem: index == cartState.itemsList.length - 1,
+                                  );
+                                },
+                              ),
+                            ),
                           ],
                         ),
-                        // List of cart items
-                        ListView.builder(
-                          shrinkWrap: true,
-                          // Avoid the listview from taking too much space
-                          itemCount: cartState.itemsList.length,
-                          itemBuilder: (context, index) {
-                            final item = cartState.itemsList[index];
-                            return CartItem(
-                              item: item,
-                              isLastItem: index ==
-                                  cartState.itemsList.length - 1,
-                            );
-                          },
-                        ),
-                      ],
+                      ),
                     );
                   },
                 ),
               ),
-
               Consumer<CartState>(
                 builder: (context, cartState, child) {
                   if (cartState.itemsList.isEmpty)
@@ -168,13 +116,12 @@ class CartScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Divider to separate cart items from total and checkout button
-
                           Text(
                             '${appLocalization.getLocalizedString(
                                 "totalPrice")}: ${cartState.totalPrice}',
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 18 * scale,
+                                fontWeight: FontWeight.bold),
                           ),
                           IconButton(
                             icon: Icon(
@@ -182,6 +129,7 @@ class CartScreen extends StatelessWidget {
                               color: cartState.selectedItemId != null
                                   ? const Color(0xFFFF7043)
                                   : Colors.grey,
+                              size: 24 * scale,
                             ),
                             onPressed: cartState.selectedItemId != null
                                 ? () {
@@ -211,27 +159,31 @@ class CartScreen extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 20),
-
               Consumer<CartState>(
                 builder: (context, cartState, child) {
                   return cartState.itemsList.isNotEmpty
-                      ? CheckoutButton(
+                      ? Center(
+                        child: SizedBox(
+                    width: screenSize.width * 0.85,
+                    child: CheckoutButton(
                     onPressed: () async {
-                      bool isConnected = await checkConnectivity();
-                      if (!isConnected) {
-                        showLoginFailedDialog(
-                          context,
-                          appLocalization.getLocalizedString('noInternetConnection'),
-                          appLocalization.getLocalizedString('noInternet'),
-                          appLocalization.selectedLanguageCode,
-                          appLocalization.getLocalizedString('ok'),
-                        );
-                        return;
-                      }
-                      final rootContext = context;
-                      _showPaymentPopup(rootContext, cartState.totalPrice, appLocalization);
+                          bool isConnected = await checkConnectivity();
+                          if (!isConnected) {
+                            showLoginFailedDialog(
+                              context,
+                              appLocalization.getLocalizedString('noInternetConnection'),
+                              appLocalization.getLocalizedString('noInternet'),
+                              appLocalization.selectedLanguageCode,
+                              appLocalization.getLocalizedString('ok'),
+                            );
+                            return;
+                          }
+                          final rootContext = context;
+                          _showPaymentPopup(rootContext, cartState.totalPrice, appLocalization);
                     },
-                  )
+                  ),
+                        ),
+                      )
                       : const SizedBox(); // Hide checkout button when empty
                 },
               ),
@@ -242,6 +194,23 @@ class CartScreen extends StatelessWidget {
       ),
     );
   }
+
+  Widget _buildTableHeaderCell(String text, double scale) {
+    return Padding(
+      padding: EdgeInsets.all(8.0 * scale),
+      child: Center(
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 14 * scale,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+      ),
+    );
+  }
+
 
   void _showPaymentPopup(BuildContext rootContext, double total, LocalizationService localizationService) {
     showDialog(
@@ -259,7 +228,6 @@ class CartScreen extends StatelessWidget {
       },
     );
   }
-
 
   Future<void> _checkout(BuildContext context,LocalizationService localizationService,double totalCash,double totalVisa) async {
     showLoadingAvatar(context);

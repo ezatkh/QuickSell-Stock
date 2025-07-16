@@ -11,38 +11,60 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Default base sizes
+    double baseTitleFontSize = 16;
+    double basePriceFontSize = 14;
+    double baseSubFontSize = 12;
+    double baseBorderRadius = 12;
+
+    double baseWidth = 390;
+    double scale = screenWidth / baseWidth;
+    scale = scale.clamp(0.70, 1.2);
+    // Apply scaling
+    double titleFontSize = baseTitleFontSize * scale;
+    double priceFontSize = basePriceFontSize * scale;
+    double subFontSize = baseSubFontSize * scale;
+    double borderRadius = baseBorderRadius * scale;
+
+    final itemName = item.itemName?.trim();
+    final showItemName = itemName != null && itemName.isNotEmpty;
+
     return GestureDetector(
       onTap: onTap,
       child: Card(
         elevation: 3,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(borderRadius),
         ),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if(item.itemName != null || item.itemName.toString() !='null' || item.itemName.toString().trim() != "")
-              Text(
-                "${item.itemName}",
-                style: const TextStyle(
-                  fontSize: 18,
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
+              if (showItemName)
+                Text(
+                  itemName,
+                  style: TextStyle(
+                    fontSize: titleFontSize,
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
                 ),
-              ),
               Text(
                 "${item.sellingPrice}",
-                style: const TextStyle(
-                  fontSize: 16,
+                style: TextStyle(
+                  fontSize: priceFontSize,
                   color: Colors.black,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Text(
                 "${item.purchasePrice}",
-                style: const TextStyle(
-                  fontSize: 12,
+                style: TextStyle(
+                  fontSize: subFontSize,
                   color: Colors.grey,
                 ),
               ),

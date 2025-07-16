@@ -17,17 +17,29 @@ class SearchField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final scale = (screenWidth / 390).clamp(0.85, 1.2); // Base width 390
+
+    final fontSize = 14 * scale;
+    final borderRadius = 12.0 * scale;
+    final paddingV = 12.0 * scale;
+    final paddingH = 14.0 * scale;
+
     return TextField(
       controller: controller,
       onChanged: onChanged,
+      style: TextStyle(
+        fontSize: fontSize,
+        color: AppColors.primaryTextColor,
+      ),
       decoration: InputDecoration(
-        hintText: hintText,
+        hintStyle: TextStyle(fontSize: fontSize - 1, color: Colors.grey),
         filled: true,
         fillColor: AppColors.backgroundColor, // Set fill color to white
-        prefixIcon: const Icon(Icons.search, color: Colors.grey),
+        prefixIcon: Icon(Icons.search, color: Colors.grey, size: 22 * scale),
         suffixIcon: controller != null && controller!.text.isNotEmpty
             ? IconButton(
-          icon: const Icon(Icons.close, color: Colors.grey),
+          icon: Icon(Icons.close, color: Colors.grey, size: 20 * scale),
           onPressed: () {
             controller?.clear();
             if (onClear != null) onClear!();
@@ -35,18 +47,21 @@ class SearchField extends StatelessWidget {
         )
             : null,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12), // Use borderRadius here
+          borderRadius: BorderRadius.circular(borderRadius),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15)), // Apply to enabled state
-          borderSide: BorderSide(color: Colors.white), // Optional: Grey border when not focused
+          borderRadius: BorderRadius.circular(borderRadius),
+          borderSide: BorderSide(color: Colors.white),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15)), // Apply to enabled state
-          borderSide: BorderSide(color: Colors.white), // Optional: Grey border when not focused
+          borderRadius: BorderRadius.circular(borderRadius),
+          borderSide: BorderSide(color: Colors.white),
         ),
-        contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 14.0), // Adjust vertical padding to control height
+        contentPadding: EdgeInsets.symmetric(
+          vertical: paddingV,
+          horizontal: paddingH,
+        ),
       ),
     );
   }

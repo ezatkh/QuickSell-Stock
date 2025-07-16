@@ -18,7 +18,7 @@ class CustomButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    double buttonWidth = ScreenUtil().screenWidth * 0.7;
+    double buttonWidth = ScreenUtil().screenWidth * 0.9;
 
     return Center(
       child: SizedBox(

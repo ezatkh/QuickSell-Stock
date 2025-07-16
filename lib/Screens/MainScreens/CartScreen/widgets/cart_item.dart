@@ -17,7 +17,9 @@ class CartItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cartState = Provider.of<CartState>(context);
-    bool isSelected = cartState.selectedItemId == item.guid; // Check if this item is selected
+    bool isSelected = cartState.selectedItemId == item.guid;
+    final screenSize = MediaQuery.of(context).size;
+    final scale = (screenSize.width / 390).clamp(0.70, 1.2);
 
     return GestureDetector(
       onTap: () {
@@ -33,8 +35,7 @@ class CartItem extends StatelessWidget {
                 0: FlexColumnWidth(1.5), // Make "Store" column wider
                 1: FlexColumnWidth(1),
                 2: FlexColumnWidth(1),
-                3: FlexColumnWidth(1),
-                4: FlexColumnWidth(2), // Adjust quantity column
+                3: FlexColumnWidth(2), // Adjust quantity column
               },
               children: [
                 TableRow(
@@ -44,7 +45,7 @@ class CartItem extends StatelessWidget {
                       child: Center(
                         child: Text(
                           '${item.itemName}', // Price display
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
+                          style: TextStyle(fontSize: 12 * scale, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -53,7 +54,7 @@ class CartItem extends StatelessWidget {
                       child: Center(
                         child: Text(
                           '${item.sellingPrice}', // Price display
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
+                          style: TextStyle(fontSize: 12 * scale, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -62,16 +63,7 @@ class CartItem extends StatelessWidget {
                       child: Center(
                         child: Text(
                           '${item.purchasePrice}', // Price display
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top:22),
-                      child: Center(
-                        child: Text(
-                          '${item.itemSizeName}', // Price display
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
+                          style: TextStyle(fontSize: 12 * scale, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -84,10 +76,7 @@ class CartItem extends StatelessWidget {
                             // Quantity text at the top
                             Text(
                               item.quantity.toString(),
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: TextStyle(fontSize: 12 * scale, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 8), // Space between quantity and buttons
                             // Vertical stack of the icons
@@ -101,10 +90,10 @@ class CartItem extends StatelessWidget {
                                       quantity: -1,
                                     );
                                   },
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.remove_circle_outline,
                                     color: Color(0xFFFF7043),
-                                    size: 20,
+                                    size: 20 * scale,
                                   ),
                                 ),
                                 IconButton(
@@ -114,10 +103,10 @@ class CartItem extends StatelessWidget {
                                       quantity: 1,
                                     );
                                   },
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.add_circle_outline,
                                     color: Color(0xFF009688),
-                                    size: 20,
+                                    size: 20 * scale,
                                   ),
                                 ),
                               ],

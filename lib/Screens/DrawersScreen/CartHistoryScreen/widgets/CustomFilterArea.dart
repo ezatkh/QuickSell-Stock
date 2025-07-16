@@ -63,14 +63,14 @@ class _CustomFilterAreaState extends State<CustomFilterArea> {
     }
   }
 
-  Widget _buildDateBox(String label, DateTime? date, bool isFrom) {
+  Widget _buildDateBox(String label, DateTime? date, bool isFrom, double scale) {
     return GestureDetector(
       onTap: () => _selectDate(isFrom),  // Make the entire field tappable
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
         child: Row(
           children: [
-            const Icon(Icons.calendar_today, color: AppColors.secondaryColor),
+            Icon(Icons.calendar_today, color: AppColors.secondaryColor, size: 20 * scale),
             const SizedBox(width: 8),
             Expanded(
               child: Column(
@@ -78,7 +78,7 @@ class _CustomFilterAreaState extends State<CustomFilterArea> {
                 children: [
                   Text(
                     widget.appLocalization.getLocalizedString(isFrom ? 'dateFrom' : 'dateTo'),
-                    style: TextStyle(fontSize: 12, color: Colors.grey[700]),
+                    style: TextStyle(fontSize: 12 * scale, color: Colors.grey[700]),
                   ),
                   const SizedBox(height: 4),
                   Row(
@@ -86,7 +86,11 @@ class _CustomFilterAreaState extends State<CustomFilterArea> {
                       Expanded(
                         child: Text(
                           date != null ? _dateFormat.format(date) : '--',
-                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black87),
+                          style: TextStyle(
+                            fontSize: 14 * scale,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black87,
+                          ),
                         ),
                       ),
                     ],
@@ -102,6 +106,9 @@ class _CustomFilterAreaState extends State<CustomFilterArea> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final scale = (screenWidth / 390).clamp(0.8, 1.2);
+
     return Container(
       decoration: BoxDecoration(
         border: Border(
@@ -119,13 +126,14 @@ class _CustomFilterAreaState extends State<CustomFilterArea> {
               // Stack vertically on smaller screens
               return Column(
                 children: [
-                  _buildDateBox(widget.appLocalization.getLocalizedString('dateFrom'), fromDate, true),
+                  _buildDateBox(widget.appLocalization.getLocalizedString('dateFrom'), fromDate, true, scale),
                   const SizedBox(height: 2),
-                  _buildDateBox(widget.appLocalization.getLocalizedString('dateTo'), toDate, false),
+                  _buildDateBox(widget.appLocalization.getLocalizedString('dateTo'), toDate, false, scale),
                   const SizedBox(height: 2),
                   Align(
                     alignment: Alignment.centerRight,
                     child: IconButton(
+                      iconSize: 24 * scale,
                       icon: const Icon(Icons.filter_alt, color: AppColors.secondaryColor),
                       tooltip: widget.appLocalization.getLocalizedString('filter'),
                       onPressed: _applyFilter,
@@ -138,11 +146,7 @@ class _CustomFilterAreaState extends State<CustomFilterArea> {
               return Row(
                 children: [
                   Expanded(
-                    child: _buildDateBox(
-                      widget.appLocalization.getLocalizedString('dateFrom'),
-                      fromDate,
-                      true,
-                    ),
+                    child: _buildDateBox(widget.appLocalization.getLocalizedString('dateFrom'), fromDate, true, scale),
                   ),
                   Container(
                     height: 40, // Set a fixed height for the divider
@@ -153,24 +157,20 @@ class _CustomFilterAreaState extends State<CustomFilterArea> {
                     ),
                   ),
                   Expanded(
-                    child: _buildDateBox(
-                      widget.appLocalization.getLocalizedString('dateTo'),
-                      toDate,
-                      false,
-                    ),
+                    child: _buildDateBox(widget.appLocalization.getLocalizedString('dateTo'), toDate, false, scale),
                   ),
                   Align(
                     alignment: Alignment.centerRight,
                     child: Container(
                       decoration: BoxDecoration(
                         color: AppColors.secondaryColor, // Background color
-                        borderRadius: BorderRadius.circular(8), // Optional: Rounded corners
+                        borderRadius: BorderRadius.circular(8 * scale),
                       ),
                       child: IconButton(
-                        icon: const Icon(Icons.search, color: AppColors.primaryColor), // Change icon color for contrast
+                        iconSize: 24 * scale,
+                        icon: const Icon(Icons.search, color: AppColors.primaryColor),
                         tooltip: widget.appLocalization.getLocalizedString('filter'),
                         onPressed: _applyFilter,
-
                       ),
                     ),
 

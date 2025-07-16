@@ -48,29 +48,37 @@ class _OtherSellScreenState extends State<OtherSellScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var appLocalization = Provider.of<LocalizationService>(context, listen: false);
     final expenseState = Provider.of<ExpenseState>(context, listen: false);
     final newExpenses = expenseState.expenses;
     expensesList = List.from(newExpenses);
 
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-    var appLocalization = Provider.of<LocalizationService>(context, listen: false);
+    final scale = (screenWidth / 390).clamp(0.70, 1.2);
+    final horizontalPadding = 20.0 * scale; // originally 20 padding horizontal
+    final verticalSpacing = 10.0 * scale;
+    final titleFontSize = 16.0 * scale;
+    final labelFontSize = 14.0 * scale;
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
             return SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: IntrinsicHeight(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 20),
-                      Text(appLocalization.getLocalizedString("expensesType")),
-                      const SizedBox(height: 7),
+                      SizedBox(height: 2 * verticalSpacing),
+                      Text(
+                        appLocalization.getLocalizedString("expensesType"),
+                        style: TextStyle(fontSize: titleFontSize, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: verticalSpacing),
                       CustomDropdown(
                         expenses: expensesList.map((item) {
                           return {
@@ -91,23 +99,30 @@ class _OtherSellScreenState extends State<OtherSellScreen> {
 
                         },
                       ),
-                      const SizedBox(height: 20), Text(appLocalization.getLocalizedString("description")),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 2 * verticalSpacing),
+                      Text(
+                        appLocalization.getLocalizedString("description"),
+                        style: TextStyle(fontSize: titleFontSize, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: verticalSpacing),
                       CustomTextField(
                         controller: saleDetailsController,
                         labelText: appLocalization.getLocalizedString("expenseDetail"),
                         maxLines: 4,
                       ),
-                      const SizedBox(height: 20),
-                      Text(appLocalization.getLocalizedString("price")),
-                      const SizedBox(height: 7),
+                      SizedBox(height: 2 * verticalSpacing),
+                      Text(
+                        appLocalization.getLocalizedString("price"),
+                        style: TextStyle(fontSize: titleFontSize, fontWeight: FontWeight.bold),
+                      ),
+                      SizedBox(height: verticalSpacing),
                       CustomTextField(
                         controller: priceController,
                         labelText: appLocalization.getLocalizedString("price"),
                         prefixIcon: Icons.attach_money,
                         keyboardType: TextInputType.number,
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 2 * verticalSpacing),
                       const Spacer(), // Pushes the button to the bottom
                       CustomButton(
                         text: appLocalization.getLocalizedString("submit"),
@@ -123,13 +138,11 @@ class _OtherSellScreenState extends State<OtherSellScreen> {
                             );
                             return;
                           }
-
-                          // If connected, proceed
                           _checkoutExpense(appLocalization);
                         },
                         color: AppColors.primaryColor,
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: 2 * verticalSpacing),
                     ],
                   ),
                 ),

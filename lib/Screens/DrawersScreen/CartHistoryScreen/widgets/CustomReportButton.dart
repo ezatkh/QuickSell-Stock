@@ -16,24 +16,23 @@ class CustomReportButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appLocalization = Provider.of<LocalizationService>(context, listen: false);
-
-    return SingleChildScrollView(  // Make the screen scrollable if elements exceed height
-      child: Container(
-        margin: const EdgeInsets.only(top: 20),
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildButtonRow(appLocalization,'assets/images/expenseIcon.png', appLocalization.getLocalizedString("expensesReport"), onPressed1),
-            const SizedBox(height: 20),
-            _buildButtonRow(appLocalization,'assets/images/salesIcon.png', appLocalization.getLocalizedString("salesReport"), onPressed2),
-          ],
-        ),
+    final screenSize = MediaQuery.of(context).size;
+    final scale = (screenSize.width / 390).clamp(0.7, 1.2);
+    return Container(
+      margin: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildButtonRow(appLocalization,'assets/images/expenseIcon.png', appLocalization.getLocalizedString("expensesReport"), onPressed1,scale),
+          const SizedBox(height: 20),
+          _buildButtonRow(appLocalization,'assets/images/salesIcon.png', appLocalization.getLocalizedString("salesReport"), onPressed2,scale),
+        ],
       ),
     );
   }
 
-  Widget _buildButtonRow(LocalizationService appLocalization, String imagePath, String text, VoidCallback onPressed) {
+  Widget _buildButtonRow(LocalizationService appLocalization, String imagePath, String text, VoidCallback onPressed,double scale) {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
@@ -47,7 +46,7 @@ class CustomReportButton extends StatelessWidget {
           splashColor: AppColors.primaryColor.withOpacity(0.1),
           highlightColor: AppColors.primaryColor.withOpacity(0.05),
           child: Container(
-            height: 140,
+            height: 140 * scale,
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: Row(
               children: [
@@ -64,15 +63,15 @@ class CustomReportButton extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       child: Image.asset(
                         imagePath,
-                        height: 80,
-                        width: 80,
+                        height: 80 * scale,
+                        width: 80 * scale,
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
                 ),
 
-                const SizedBox(width: 20), // مسافة بين الصورة والنص
+                const SizedBox(width: 20),
 
                 Expanded(
                   child: Center(
@@ -81,7 +80,7 @@ class CustomReportButton extends StatelessWidget {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 20,
+                        fontSize: 20 * scale,
                         color: AppColors.primaryColor,
                       ),
                     ),

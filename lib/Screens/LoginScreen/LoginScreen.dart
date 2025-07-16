@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -62,240 +61,6 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       }
     }
-
-  @override
-  Widget build(BuildContext context) {
-    ScreenUtil.init(context, designSize: Size(360, 690), minTextAdapt: true);
-    double maxWidth = ScreenUtil().screenWidth > 600 ? 600.w : ScreenUtil().screenWidth * 0.9;
-    final screenSize = MediaQuery.of(context).size;
-
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider<LocalizationService>(
-          create: (_) {
-            var localizationState = LocalizationService();
-            localizationState.initLocalization(); // Initialize localization
-            return localizationState;
-          },
-        ),
-        ChangeNotifierProvider<LoginState>(
-          create: (_) => LoginState(),
-        ),
-      ],
-      child: Consumer2<LocalizationService, LoginState>(
-        builder: (context, localizationService, loginState, _) {
-
-          // Fetching the store list from the StoresState
-          final storeState = Provider.of<StoresState>(context);
-          final stores = storeState.stores;
-
-          return Directionality(
-            textDirection: localizationService.selectedLanguageCode == "ar"
-                ? TextDirection.rtl
-                : TextDirection.ltr,
-            child: Scaffold(
-              appBar: AppBar(
-                backgroundColor: AppColors.primaryColor,
-                elevation: 0,
-                actions: [
-                  CustomDropDown(localizationService: localizationService),
-                ],
-              ),
-              body: SafeArea(
-                child: Container(
-                  color: AppColors.backgroundColor,
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(//
-                      vertical: 12.0,
-                      horizontal: screenSize.width * 0.07,
-                    ),
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: maxWidth),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: <Widget>[
-                            const LogoWidget(),  // Display logo at the top
-                            const SizedBox(height: 25),
-                            CustomTextField(
-                              hint: localizationService.isLocalizationLoaded
-                                  ? localizationService.getLocalizedString('userName')
-                                  : 'Username',
-                              icon: Icons.person_outline,
-                              onChanged: loginState.setUsername,
-                              textColor: AppColors.primaryTextColor,  // Pass the primary text color
-                              hintColor: AppColors.hintTextColor,  // Pass the hint text color
-                              iconColor: AppColors.iconColor,  // Pass the icon color
-                              borderColor: AppColors.borderColor,  // Pass the border color
-                              fillColor: AppColors.cardBackgroundColor,  // Pass the fill color
-                              backgroundColor: AppColors.backgroundColor,  // Pass the background color
-                            ),
-                            const SizedBox(height: 20),
-                            CustomTextField(
-                              hint: localizationService.isLocalizationLoaded
-                                  ? localizationService.getLocalizedString('password')
-                                  : 'Password',
-                              icon: Icons.lock_outline,
-                              obscureText: true,
-                              onChanged: loginState.setPassword,
-                              textColor: AppColors.primaryTextColor,  // Pass the primary text color
-                              hintColor: AppColors.hintTextColor,  // Pass the hint text color
-                              iconColor: AppColors.iconColor,  // Pass the icon color
-                              borderColor: AppColors.borderColor,  // Pass the border color
-                              fillColor: AppColors.cardBackgroundColor,  // Pass the fill color
-                              backgroundColor: AppColors.backgroundColor,  // Pass the background color
-                            ),
-                            const SizedBox(height: 25),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomDropdownField<String>(
-                                    label: localizationService.isLocalizationLoaded
-                                        ? localizationService.getLocalizedString('selectStore')
-                                        : 'Choose Store',
-                                    hint: "",
-                                    items: stores.map((store) => store.address).toList(),
-                                    selectedValue: selectedStore?.address, // Use store address for display
-                                    onChanged: (value) {
-                                      setState(() {
-                                        // Find the selected store by its address
-                                        selectedStore = stores.firstWhere(
-                                              (store) => store.address == value,
-                                          orElse: () => StoreModel(storeId: '', address: ''),
-                                        );
-                                      });
-                                    },
-                                    backgroundColor: AppColors.cardBackgroundColor,
-                                    textColor: AppColors.primaryTextColor,
-                                    hintColor: AppColors.hintTextColor,
-                                    borderColor: AppColors.primaryColor,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top:25.0),
-                                  child: IconButton(
-                                    icon: const Icon(Icons.refresh, color: AppColors.secondaryColor),
-                                    tooltip: localizationService.getLocalizedString('refresh'),
-                                    onPressed: () async {
-                                      bool isConnected = await checkConnectivity();
-                                      if (!isConnected) {
-                                        showLoginFailedDialog(
-                                          context,
-                                          localizationService.getLocalizedString('noInternetConnection'),
-                                          localizationService.getLocalizedString('noInternet'),
-                                          localizationService.selectedLanguageCode,
-                                          localizationService.getLocalizedString('ok'),
-                                        );
-                                        return;
-                                      }
-                                      showLoadingAvatar(context);
-                                      try {
-                                        await Provider.of<StoresState>(context, listen: false).fetchStores(context);
-                                        Navigator.of(context, rootNavigator: true).pop();
-                                      }
-                                      catch (e) {
-                                        debugPrint('Error while fetching stores: $e');
-                                        Navigator.of(context, rootNavigator: true).pop();
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                            // Aligning the login button to the bottom
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Padding(
-                                padding: EdgeInsets.only(top: screenSize.height * 0.1),
-                                child: CustomButton(
-                                  text: localizationService.isLocalizationLoaded
-                                      ? localizationService.getLocalizedString('login')
-                                      : 'Login',
-                                  onPressed: () async {
-                                    // Check for internet connectivity
-                                    bool isConnected = await checkConnectivity();
-                                    if (!isConnected) {
-                                      showLoginFailedDialog(
-                                        context,
-                                        localizationService.getLocalizedString('noInternetConnection'),
-                                        localizationService.getLocalizedString('noInternet'),
-                                        localizationService.selectedLanguageCode,
-                                        localizationService.getLocalizedString('ok'),
-                                      );
-                                      return;
-                                    }
-                                    // Validate login inputs
-                                    bool isValid = validateLoginInputs(loginState);
-                                    if (!isValid) {
-                                      showLoginFailedDialog(
-                                        context,
-                                        localizationService.getLocalizedString('loginFailedEmpty'),
-                                        localizationService.getLocalizedString('loginfailed'),
-                                        localizationService.selectedLanguageCode,
-                                        localizationService.getLocalizedString('ok'),
-                                      );
-                                      return;
-                                    }
-                                    // Handle login process and navigation
-                                    await handleLogin(context,localizationService, loginState, selectedStore);
-                                  },
-                                  color: AppColors.primaryColor,
-                                ),
-                              ),
-                            ),
-                            if (_isSmartLoginSupported)
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Padding(
-                                padding: EdgeInsets.only(top: screenSize.height * 0.01), // Adjust padding if needed
-                                child: SmartLoginButton(
-                                  onPressed: () async {
-                                    debugPrint("selected Store :${selectedStore.toString()}");
-                                    // Check for internet connectivity
-                                    bool isConnected = await checkConnectivity();
-                                    if (!isConnected) {
-                                      showLoginFailedDialog(
-                                        context,
-                                        localizationService.getLocalizedString('noInternet'),
-                                        localizationService.getLocalizedString('noInternetConnection'),
-                                        localizationService.selectedLanguageCode,
-                                        localizationService.getLocalizedString('ok'),
-                                      );
-                                      return;
-                                    }
-                                    // Validate login inputs
-                                    bool isValid = validateStoreInputs();
-                                    if (!isValid) {
-                                      showLoginFailedDialog(
-                                        context,
-                                        localizationService.getLocalizedString('loginFailedStoreEmpty'),
-                                        localizationService.getLocalizedString('loginfailed'),
-                                        localizationService.selectedLanguageCode,
-                                        localizationService.getLocalizedString('ok'),
-                                      );
-                                      return;
-                                    }
-                                     _handleSmartLogin(context,loginState,localizationService,selectedStore);
-                                  },
-                                  buttonColor: AppColors.primaryColor, // Set button color to match login button
-                                  iconColor: AppColors.backgroundColor,
-                                  buttonWidth: 150, // Customize the button width if needed
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
 
   bool validateLoginInputs(LoginState loginState) {
     print("validateLoginInputs invoked in loginScreen");
@@ -467,4 +232,243 @@ if(selectedStore  == null) {
     }
   }
 
+  @override
+  Widget build(BuildContext context) {
+    ScreenUtil.init(context, designSize: Size(360, 690), minTextAdapt: true);
+    double maxWidth = ScreenUtil().screenWidth > 600 ? 600.w : ScreenUtil().screenWidth * 0.9;
+    final screenSize = MediaQuery.of(context).size;
+
+    final scale = (screenSize.width / 390).clamp(0.85, 1.2);
+    final verticalPadding = 12.0 * scale;
+    final horizontalPadding = screenSize.width * 0.07;
+    final spacingLarge = 20.0 * scale;
+    final spacingMedium = 17.0 * scale;
+    final spacingSmall = 10.0 * scale;
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<LocalizationService>(
+          create: (_) {
+            var localizationState = LocalizationService();
+            localizationState.initLocalization(); // Initialize localization
+            return localizationState;
+          },
+        ),
+        ChangeNotifierProvider<LoginState>(
+          create: (_) => LoginState(),
+        ),
+      ],
+      child: Consumer2<LocalizationService, LoginState>(
+        builder: (context, localizationService, loginState, _) {
+
+          // Fetching the store list from the StoresState
+          final storeState = Provider.of<StoresState>(context);
+          final stores = storeState.stores;
+
+          return Directionality(
+            textDirection: localizationService.selectedLanguageCode == "ar"
+                ? TextDirection.rtl
+                : TextDirection.ltr,
+            child: Scaffold(
+              appBar: AppBar(
+                backgroundColor: AppColors.primaryColor,
+                elevation: 0,
+                actions: [
+                  CustomDropDown(localizationService: localizationService),
+                ],
+              ),
+              body: SafeArea(
+                child: Container(
+                  color: AppColors.backgroundColor,
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(
+                      vertical: verticalPadding,
+                      horizontal: horizontalPadding,
+                    ),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: maxWidth),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            const LogoWidget(),
+                            SizedBox(height: spacingLarge),
+                            CustomTextField(
+                              hint: localizationService.isLocalizationLoaded
+                                  ? localizationService.getLocalizedString('userName')
+                                  : 'Username',
+                              icon: Icons.person_outline,
+                              onChanged: loginState.setUsername,
+                              textColor: AppColors.primaryTextColor,  // Pass the primary text color
+                              hintColor: AppColors.hintTextColor,  // Pass the hint text color
+                              iconColor: AppColors.iconColor,  // Pass the icon color
+                              borderColor: AppColors.borderColor,  // Pass the border color
+                              fillColor: AppColors.cardBackgroundColor,  // Pass the fill color
+                              backgroundColor: AppColors.backgroundColor,  // Pass the background color
+                            ),
+                            SizedBox(height: spacingMedium),
+                            CustomTextField(
+                              hint: localizationService.isLocalizationLoaded
+                                  ? localizationService.getLocalizedString('password')
+                                  : 'Password',
+                              icon: Icons.lock_outline,
+                              obscureText: true,
+                              onChanged: loginState.setPassword,
+                              textColor: AppColors.primaryTextColor,  // Pass the primary text color
+                              hintColor: AppColors.hintTextColor,  // Pass the hint text color
+                              iconColor: AppColors.iconColor,  // Pass the icon color
+                              borderColor: AppColors.borderColor,  // Pass the border color
+                              fillColor: AppColors.cardBackgroundColor,  // Pass the fill color
+                              backgroundColor: AppColors.backgroundColor,  // Pass the background color
+                            ),
+                            SizedBox(height: spacingLarge),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomDropdownField<String>(
+                                    label: localizationService.isLocalizationLoaded
+                                        ? localizationService.getLocalizedString('selectStore')
+                                        : 'Choose Store',
+                                    hint: "",
+                                    items: stores.map((store) => store.address).toList(),
+                                    selectedValue: selectedStore?.address, // Use store address for display
+                                    onChanged: (value) {
+                                      setState(() {
+                                        // Find the selected store by its address
+                                        selectedStore = stores.firstWhere(
+                                              (store) => store.address == value,
+                                          orElse: () => StoreModel(storeId: '', address: ''),
+                                        );
+                                      });
+                                    },
+                                    backgroundColor: AppColors.cardBackgroundColor,
+                                    textColor: AppColors.primaryTextColor,
+                                    hintColor: AppColors.hintTextColor,
+                                    borderColor: AppColors.primaryColor,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(top: spacingLarge),
+                                  child: IconButton(
+                                    icon: const Icon(Icons.refresh, color: AppColors.secondaryColor),
+                                    tooltip: localizationService.getLocalizedString('refresh'),
+                                    onPressed: () async {
+                                      bool isConnected = await checkConnectivity();
+                                      if (!isConnected) {
+                                        showLoginFailedDialog(
+                                          context,
+                                          localizationService.getLocalizedString('noInternetConnection'),
+                                          localizationService.getLocalizedString('noInternet'),
+                                          localizationService.selectedLanguageCode,
+                                          localizationService.getLocalizedString('ok'),
+                                        );
+                                        return;
+                                      }
+                                      showLoadingAvatar(context);
+                                      try {
+                                        await Provider.of<StoresState>(context, listen: false).fetchStores(context);
+                                        Navigator.of(context, rootNavigator: true).pop();
+                                      }
+                                      catch (e) {
+                                        debugPrint('Error while fetching stores: $e');
+                                        Navigator.of(context, rootNavigator: true).pop();
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            // Aligning the login button to the bottom
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Padding(
+                                padding: EdgeInsets.only(top: screenSize.height * 0.1),
+                                child: CustomButton(
+                                  text: localizationService.isLocalizationLoaded
+                                      ? localizationService.getLocalizedString('login')
+                                      : 'Login',
+                                  onPressed: () async {
+                                    // Check for internet connectivity
+                                    bool isConnected = await checkConnectivity();
+                                    if (!isConnected) {
+                                      showLoginFailedDialog(
+                                        context,
+                                        localizationService.getLocalizedString('noInternetConnection'),
+                                        localizationService.getLocalizedString('noInternet'),
+                                        localizationService.selectedLanguageCode,
+                                        localizationService.getLocalizedString('ok'),
+                                      );
+                                      return;
+                                    }
+                                    // Validate login inputs
+                                    bool isValid = validateLoginInputs(loginState);
+                                    if (!isValid) {
+                                      showLoginFailedDialog(
+                                        context,
+                                        localizationService.getLocalizedString('loginFailedEmpty'),
+                                        localizationService.getLocalizedString('loginfailed'),
+                                        localizationService.selectedLanguageCode,
+                                        localizationService.getLocalizedString('ok'),
+                                      );
+                                      return;
+                                    }
+                                    // Handle login process and navigation
+                                    await handleLogin(context,localizationService, loginState, selectedStore);
+                                  },
+                                  color: AppColors.primaryColor,
+                                ),
+                              ),
+                            ),
+                            if (_isSmartLoginSupported)
+                              Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: screenSize.height * 0.01), // Adjust padding if needed
+                                  child: SmartLoginButton(
+                                    onPressed: () async {
+                                      debugPrint("selected Store :${selectedStore.toString()}");
+                                      // Check for internet connectivity
+                                      bool isConnected = await checkConnectivity();
+                                      if (!isConnected) {
+                                        showLoginFailedDialog(
+                                          context,
+                                          localizationService.getLocalizedString('noInternet'),
+                                          localizationService.getLocalizedString('noInternetConnection'),
+                                          localizationService.selectedLanguageCode,
+                                          localizationService.getLocalizedString('ok'),
+                                        );
+                                        return;
+                                      }
+                                      // Validate login inputs
+                                      bool isValid = validateStoreInputs();
+                                      if (!isValid) {
+                                        showLoginFailedDialog(
+                                          context,
+                                          localizationService.getLocalizedString('loginFailedStoreEmpty'),
+                                          localizationService.getLocalizedString('loginfailed'),
+                                          localizationService.selectedLanguageCode,
+                                          localizationService.getLocalizedString('ok'),
+                                        );
+                                        return;
+                                      }
+                                      _handleSmartLogin(context,loginState,localizationService,selectedStore);
+                                    },
+                                    buttonColor: AppColors.primaryColor, // Set button color to match login button
+                                    iconColor: AppColors.backgroundColor,
+                                    buttonWidth: 150, // Customize the button width if needed
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
