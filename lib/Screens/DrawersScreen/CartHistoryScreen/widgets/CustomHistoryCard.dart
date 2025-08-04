@@ -55,7 +55,7 @@ class _CustomHistoryCardState extends State<CustomHistoryCard> {
                 DateHelper.formatTransactionDate(widget.transactionDate),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 14.sp,  // scaled font size
+                  fontSize: 14.sp,
                   color: AppColors.primaryTextColor,
                 ),
               ),
@@ -145,16 +145,15 @@ class _CustomHistoryCardState extends State<CustomHistoryCard> {
       _showItemListDialog(context, itemOrderItems, appLocalization);
 
     } catch (e) {
-      Navigator.of(context).pop();  // Close the loading indicator
+      Navigator.of(context).pop();
 
-      // Show failure Snackbar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('${appLocalization.getLocalizedString("errorFailedUnexpected")}: ${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );
-      print("Error fetching order items: $e");  // Print error for debugging
+      print("Error fetching order items: $e");
     }
   }
 

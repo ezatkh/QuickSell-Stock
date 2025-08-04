@@ -100,10 +100,10 @@ class CustomItemOrderItemsDialog extends StatelessWidget {
                                       title: '${appLocalization.getLocalizedString('name')}: ',
                                       value: item.itemName!,
                                     ),
-                                    CustomDetailRow(
-                                      title: '${appLocalization.getLocalizedString('size')}: ',
-                                      value: item.itemSizeName.toString(),
-                                    ),
+                                    // CustomDetailRow(
+                                    //   title: '${appLocalization.getLocalizedString('size')}: ',
+                                    //   value: item.itemSizeName.toString(),
+                                    // ),
                                     CustomDetailRow(
                                       title: '${appLocalization.getLocalizedString('actualPrice')}: ',
                                       value: item.purchasePrice.toStringAsFixed(2),

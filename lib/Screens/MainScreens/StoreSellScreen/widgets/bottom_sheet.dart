@@ -21,14 +21,14 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   final TextEditingController _quantityController = TextEditingController(text: '1');
   final TextEditingController _offerPriceController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  Future<List<ItemSizeModel>>? _itemSizesFuture;
-  ItemSizeModel? _selectedSize;
-  bool sizeError=false;
-  @override
-  void initState() {
-    super.initState();
-    _itemSizesFuture = ItemSizeService.fetchItemsSizes(context, widget.item.itemId);
-  }
+  // Future<List<ItemSizeModel>>? _itemSizesFuture;
+  // ItemSizeModel? _selectedSize;
+  // bool sizeError=false;
+  // @override
+  // void initState() {
+  //   super.initState();
+    // _itemSizesFuture = ItemSizeService.fetchItemsSizes(context, widget.item.itemId);
+  // }
 
   @override
   void dispose() {
@@ -38,26 +38,25 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
   }
 
   void _confirmSale() {
-    print("_confirmSale invoked");
     final cartState = context.read<CartState>();
-    final currentItemId=widget.item.itemId;
-    final int enteredQuantity = int.tryParse(_quantityController.text) ?? 0;
+    // final currentItemId=widget.item.itemId;
+    // final int enteredQuantity = int.tryParse(_quantityController.text) ?? 0;
 
     // Sum quantities of items in the cart that match the current itemId
-    final int existingQuantityInCart = cartState.itemsList
-        .where((item) => item.id == currentItemId && item.itemSizeId == _selectedSize?.sizeId)
-        .fold(0, (sum, item) => sum + item.quantity);
+    // final int existingQuantityInCart = cartState.itemsList
+    //     .where((item) => item.id == currentItemId && item.itemSizeId == _selectedSize?.sizeId)
+    //     .fold(0, (sum, item) => sum + item.quantity);
 
-    if ((existingQuantityInCart + enteredQuantity) > (_selectedSize?.quantity ?? 0)) {
-      setState(() {
-        sizeError=true;
-      });
-      print("_confirmSale canceled");
-    }
-    else{
-      setState(() {
-        sizeError=false;
-      });
+    // if ((existingQuantityInCart + enteredQuantity) > (_selectedSize?.quantity ?? 0)) {
+    //   setState(() {
+    //     sizeError=true;
+    //   });
+    //   print("_confirmSale canceled");
+    // }
+   // else{
+      // setState(() {
+      //   sizeError=false;
+      // });
     if (_formKey.currentState?.validate() ?? false) {
       final soldItem = ItemCart(
         id: widget.item.itemId,
@@ -67,16 +66,15 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
             : widget.item.sellingPrice,
         purchasePrice: widget.item.purchasePrice,
         itemName: widget.item.itemName,
-        itemSizeId: _selectedSize!.sizeId,
-        itemSizeName:_selectedSize!.sizeLabel,
+        // itemSizeId: _selectedSize!.sizeId,
+        // itemSizeName:_selectedSize!.sizeLabel,
       );
-
       cartState.addStoreItem(soldItem);
-      debugPrint("Cart State: \${cartState.itemsList}");
-      debugPrint("Total Price: \${cartState.totalPrice}");
+      debugPrint("Cart State: ${cartState.itemsList}");
+      debugPrint("Total Price: ${cartState.totalPrice}");
     Navigator.pop(context);
       }
-    }
+   // }
   }
 
   void _discardSale() {
@@ -179,93 +177,93 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
                     keyboardType: TextInputType.number,
                     required: true,
                   ),
-                  if(sizeError)...[
-                    Text(
-                      appLocalization.getLocalizedString('quantityExceedsAvailable'),
-                      style:  TextStyle(
-                        color: AppColors.errorColor,
-                        fontWeight: FontWeight.bold,
-                        fontSize: fontSizeSmall,
+                  // if(sizeError)...[
+                  //   Text(
+                  //     appLocalization.getLocalizedString('quantityExceedsAvailable'),
+                  //     style:  TextStyle(
+                  //       color: AppColors.errorColor,
+                  //       fontWeight: FontWeight.bold,
+                  //       fontSize: fontSizeSmall,
+                  //     ),
+                  //   ),
+                  //   SizedBox(height: spacing),
+                  // ],
+                  // FutureBuilder<List<ItemSizeModel>>(
+                  //   future: _itemSizesFuture,
+                  //   builder: (context, snapshot) {
+                  //     if (snapshot.connectionState == ConnectionState.waiting) {
+                  //       return Center(child: CircularProgressIndicator());
+                  //     } else if (snapshot.hasError) {
+                  //       return Text(appLocalization.getLocalizedString('errorLoading'));
+                  //     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  //       return Text(appLocalization.getLocalizedString('noSizesAvailable'));
+                  //     }
+                  //     else {
+                  //       final sizes = snapshot.data!;
+                  //       _selectedSize ??= sizes.first;
+                  //
+                  //       return Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           SizedBox(height: spacing),
+                  //           Theme(
+                  //             data: Theme.of(context).copyWith(
+                  //               canvasColor: Colors.grey[200],
+                  //               highlightColor: Colors.transparent,
+                  //               splashColor: Colors.transparent,
+                  //             ),
+                  //             child: DropdownButtonFormField<ItemSizeModel>(
+                  //               value: _selectedSize,
+                  //               decoration: InputDecoration(
+                  //                 filled: true,
+                  //                 fillColor: AppColors.cardBackgroundColor,
+                  //                 border: OutlineInputBorder(),
+                  //                 contentPadding: EdgeInsets.symmetric(
+                  //                   horizontal: spacing,
+                  //                   vertical: 10,
+                  //                 ),
+                  //               ),
+                  //               dropdownColor: Colors.white,
+                  //               items: sizes.map((size) {
+                  //                 return DropdownMenuItem<ItemSizeModel>(
+                  //                   value: size,
+                  //                   child: Text(
+                  //                     '${size.sizeLabel} - ${appLocalization.getLocalizedString('quantity')}: ${size.quantity}',
+                  //                     style: TextStyle(fontSize: fontSizeSmall),
+                  //                   ),
+                  //                 );
+                  //               }).toList(),
+                  //               onChanged: (value) {
+                  //                 setState(() {
+                  //                   _selectedSize = value;
+                  //                 });
+                  //               },
+                  //               validator: (value) {
+                  //                 if (value == null) {
+                  //                   return appLocalization.getLocalizedString('pleaseChooseSize');
+                  //                 }
+                  //                 return null;
+                  //               },
+                  //             ),
+                  //           ),
+                  //           SizedBox(height: spacing),
+                  //         ],
+                  //       );
+                  //     }
+                  //   },
+                  // ),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: _confirmSale,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryColor,
+                        minimumSize: Size(buttonWidth, buttonHeight),
+                      ),
+                      child: Text(
+                        appLocalization.getLocalizedString('confirmSale'),
+                        style: TextStyle(color: AppColors.lighterTextColor),
                       ),
                     ),
-                    SizedBox(height: spacing),
-                  ],
-                  FutureBuilder<List<ItemSizeModel>>(
-                    future: _itemSizesFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      } else if (snapshot.hasError) {
-                        return Text(appLocalization.getLocalizedString('errorLoading'));
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return Text(appLocalization.getLocalizedString('noSizesAvailable'));
-                      }
-                      else {
-                        final sizes = snapshot.data!;
-                        _selectedSize ??= sizes.first;
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: spacing),
-                            Theme(
-                              data: Theme.of(context).copyWith(
-                                canvasColor: Colors.grey[200],
-                                highlightColor: Colors.transparent,
-                                splashColor: Colors.transparent,
-                              ),
-                              child: DropdownButtonFormField<ItemSizeModel>(
-                                value: _selectedSize,
-                                decoration: InputDecoration(
-                                  filled: true,
-                                  fillColor: AppColors.cardBackgroundColor,
-                                  border: OutlineInputBorder(),
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: spacing,
-                                    vertical: 10,
-                                  ),
-                                ),
-                                dropdownColor: Colors.white,
-                                items: sizes.map((size) {
-                                  return DropdownMenuItem<ItemSizeModel>(
-                                    value: size,
-                                    child: Text(
-                                      '${size.sizeLabel} - ${appLocalization.getLocalizedString('quantity')}: ${size.quantity}',
-                                      style: TextStyle(fontSize: fontSizeSmall),
-                                    ),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    _selectedSize = value;
-                                  });
-                                },
-                                validator: (value) {
-                                  if (value == null) {
-                                    return appLocalization.getLocalizedString('pleaseChooseSize');
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ),
-                            SizedBox(height: spacing),
-                            Center(
-                              child: ElevatedButton(
-                                onPressed: _confirmSale,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primaryColor,
-                                  minimumSize: Size(buttonWidth, buttonHeight),
-                                ),
-                                child: Text(
-                                  appLocalization.getLocalizedString('confirmSale'),
-                                  style: TextStyle(color: AppColors.lighterTextColor),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }
-                    },
                   ),
                 ],
               ),

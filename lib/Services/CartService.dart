@@ -40,7 +40,7 @@ class CartService {
             "quantity": item.quantity,
             "unitPrice": item.sellingPrice,
             "ActualPrice":item.purchasePrice,
-            "Size":item.itemSizeId.toString()
+            // "Size":item.itemSizeId.toString()
           };
         }).toList()
       }
