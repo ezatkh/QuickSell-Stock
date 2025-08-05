@@ -14,8 +14,8 @@ class ProductCard extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
 
     // Default base sizes
-    double baseTitleFontSize = 16;
-    double basePriceFontSize = 14;
+    double baseTitleFontSize = 14;
+    double basePriceFontSize = 12;
     double baseSubFontSize = 12;
     double baseBorderRadius = 12;
 
@@ -50,6 +50,7 @@ class ProductCard extends StatelessWidget {
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
                   ),
+                  maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                 ),

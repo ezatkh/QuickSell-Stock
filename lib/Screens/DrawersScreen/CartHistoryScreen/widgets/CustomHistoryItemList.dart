@@ -24,7 +24,6 @@ class CustomHistoryItemList extends StatelessWidget {
           transactionDate: item.createdAt.toString(),
           createdBy: item.createdBy.toString(),
           totalPrice: item.totalPrice.toString(),
-
         );
       },
     );

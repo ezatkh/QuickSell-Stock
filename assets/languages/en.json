@@ -94,5 +94,6 @@
   "visaAndCash": "Cash + Visa",
   "choosePaymentMethod": "Choose payment method",
   "cashAmount": "Cash amount",
-  "size": "Size"
+  "size": "Size",
+  "about": "About"
 }

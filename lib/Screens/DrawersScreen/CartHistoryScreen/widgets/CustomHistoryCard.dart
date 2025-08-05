@@ -109,7 +109,7 @@ class _CustomHistoryCardState extends State<CustomHistoryCard> {
                           _handleOrderItemsFetch(context,appLocalization);
                         },
                         icon: Icon(Icons.visibility,
-                          size: 28.sp,  // scaled icon size
+                          size: 24.sp,  // scaled icon size
                         ), // Use an eye icon for the "View" action
                         color: AppColors.secondaryColor, // Set the icon color
                         tooltip: '${appLocalization.getLocalizedString('view')}', // Tooltip for accessibility

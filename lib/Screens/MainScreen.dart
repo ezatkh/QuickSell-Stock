@@ -178,6 +178,82 @@ class _MainScreenState extends State<MainScreen> {
                   },
                 ),
                 ListTile(
+                  leading: Icon(Icons.info_outline),
+                  title: Text(appLocalization.getLocalizedString("about")),
+                  onTap: () async {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          title: Center(  // Center the title
+                            child: Text(
+                              appLocalization.getLocalizedString("about"),
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          content: Directionality(   // Force LTR inside content
+                            textDirection: TextDirection.ltr,
+                            child: SingleChildScrollView(
+                              child: ListBody(
+                                children: <Widget>[
+                                  Text(
+                                    'App Name:',
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0, bottom: 12),
+                                    child: Text(
+                                      'Quick Sell',
+                                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Store:',
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0, bottom: 12),
+                                    child: Text(
+                                      'GE',
+                                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Version:',
+                                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Text(
+                                      '1.0.0',
+                                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text(
+                                'Close',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+                ListTile(
                   leading: Icon(Icons.logout),
                   title: Text(appLocalization.getLocalizedString("logout")),
                   onTap: () {
